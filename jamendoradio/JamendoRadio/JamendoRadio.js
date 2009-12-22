@@ -1,18 +1,29 @@
 function manipulatePage() {
-    overrideLinks("jambutton_miniactionicon_inner");
-    overrideLinks("jambutton_bigactionicon");
-    overrideLinks("album_simple_play");
-    overrideLinks("container_artistpage_play");
-    overrideLinks("visual_radio");
-    overrideLinks("jambutton_playbutton_maxi");
-    overrideLinks("g_playbutton");
-    overrideLinks("jambutton_smallactionicon");
-
+	overrideLinks("txtorange");
+    overrideLinks("trackstable_play");
+	overrideLinks("album_simple_play");
+	overrideLinks("g_playbutton");
+	
+	overrideLinks("container_artistpage_play");
+	overrideLinks("album_browser_playbutton");
+	overrideLinks("jambutton_playbutton_maxi");
+	
+	overrideLinks("visual_radio");
+	
+	overrideLinks("jambutton", "featured_now_block");
+	
 	createArtistRadio("info_artistapage_avatar");
 }
 
-function overrideLinks(cssClass) {
-	var playButtons = document.body.getElementsByClassName(cssClass);
+function overrideLinks(cssClass, containerId) {
+	var playButtons;
+	if(!containerId) playButtons = document.body.getElementsByClassName(cssClass);
+	else {
+		var container = document.getElementById(containerId);
+		if(container) playButtons = container.getElementsByClassName(cssClass);
+		else return;
+	}
+	
 	for(i = 0; i < playButtons.length; i++) {
 	    playButtons[i].onclick = start;
 		
