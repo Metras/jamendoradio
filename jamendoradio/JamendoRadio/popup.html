@@ -124,8 +124,7 @@
 			});
 		}
 		var userAlerted = false;
-		function UpdateSubset(subset)
-		{
+		function UpdateSubset(subset) {
 			if(subset.indexOf("/?") > -1) return subset;
 			var rxConfig = /[?&]?(\w+)=([\w+.]+)/g;
 
@@ -133,7 +132,7 @@
 			var config = "";
 
 			var setting = rxConfig.exec(subset);
-			if(setting && !userAlerted) alert('The substring format has been updated to support playlist and user starred albums.\n\nI will try to convert your channels into the new format.');
+			if(setting && !userAlerted) alert('The configuration string format has been updated to support playlist and user starred albums.\n\nI will try to convert your channels into the new format.');
 
 			while(setting) 
 			{ 
