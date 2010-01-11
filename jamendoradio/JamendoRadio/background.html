@@ -20,7 +20,6 @@
 	var timeKeeper;
 	var volume = 1;
 	
-	var test;
 
     //Check if the current song has ended, and advance playlist to next item if that is the case.
     setInterval(function() { if (IsPlaying && audio.ended) Next(); }, 250);
@@ -48,7 +47,6 @@
 			Unload("loading");
 			if (!settings) settings = "/?order=ratingmonth_desc";
             url = "http://api.jamendo.com/get2/name+stream+album_name+album_url+album_image+artist_name+artist_url/track/json/track_album+album_artist" + settings;
-			url += "&streamencoding=ogg2";
 			
             if (asRadio) {
                 loop = false;
@@ -232,4 +230,4 @@
     }
     Unload();
 </script>
-</head><body></body></html>
+</head><body><div id="player"></div></body></html>

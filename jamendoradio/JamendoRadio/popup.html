@@ -1,208 +1,175 @@
 <html>
 <head>
     <style type="text/css">
-		body { overflow:hidden; }
-        table { white-space: nowrap; } td { vertical-align:top; max-width:315px; overflow:hidden;}
-        a { margin-right: 10px; cursor:hand; text-decoration:underline;color:#999; display:inline; }
-        #stationContainer { text-align:center;  }
-        #controls { vertical-align: top; float: right; }
-        #controls a { width: 16px; display:block; height: 16px; margin-bottom:5px; text-decoration:none!important; }
-        #play { background: url(Images/control_pause.png) no-repeat; }
-        #stop { background: url(Images/control_stop.png) no-repeat; }
-        #next { background: url(Images/control_fastforward.png) no-repeat; }
-		#volume { cursor:hand; }
-        .paused { background: url(Images/control_play.png) no-repeat !important; }
-		.looped { background: url(Images/control_rewind.png) no-repeat !important; }
-        .disabled { display:none; }
-        .empty { cursor:auto!important; text-decoration:none!important; }
-    </style>
-	<script src="Theme/jquery-1.3.2.min.js" />
-    <script type="text/javascript">
-        var bp = chrome.extension.getBackgroundPage();
-        bp.OnPositionChanged = loadPlayerInfo;
-        bp.OnImageLoaded = setImage;
-		 
-        function main() {
-			var skipDefault = eval(localStorage["SkipDefault"]);
-			if(!skipDefault)		
-				stations.appendChild(getStationLink("Default", ""));
+		body { width: 370px; overflow:hidden; }
+		a { cursor:hand; }
+		.player { background: url(background.png) no-repeat 0 15px; height: 180px; }
+		.stations { text-align:center; width:370px; }
+		.stations a { color:#a1a1a1; margin:3px 4px; }
+		
+		.albumimage, .albumloading { position:absolute; top:47;left:31; width:100px;height:100px; }
+		.albumloading { background:url(Images/ajax-loader.gif) no-repeat 20px 20px; }
+		
+		.info { position:absolute; top:48;left:140; width:210px; overflow:hidden; }
+		.info a { font-family: verdana; float:left; clear:both; white-space:nowrap;  }
+		
+		.title { font-size: 16pt; color:#a031aa; cursor:default!important; margin-bottom:4px; }
+		.album { font-size: 10pt; color:#444343; }
+		.artist{ font-weight: bold; font-size: 10pt; color:#444343; }
+		
+		.play { position:absolute; top:0; left:300; background: url(play.png); width:80px;height:80px; }
+		.play:hover  { background:url(play-hover.png); }
+		.play:active { background:url(play-active.png); }
 
-            var storedStations = eval(localStorage["Stations"]);
+		.pause { background: url(pause.png)!important; }
+		.pause:hover  { background:url(pause-hover.png)!important; }
+		.pause:active { background:url(pause-active.png)!important; }
+		
+		.next { position:absolute; top:85; left:337; background: url(next.png); width:27px;height:27px; }
+		.next:active { background:url(next-active.png); }
+		
+		.stop { position:absolute; top:115; left:337; background: url(stop.png); width:27px;height:27px; }
+		.stop:active { background:url(stop-active.png); }
+		
+		.ui-slider { height:17px; position:absolute; width:145px; top:147px; left:190px;}
+		.ui-slider-handle { background:url(volume.png); width:17px;height:17px; position:absolute;}
+		.ui-slider-handle:active { background:url(volume-active.png); }
+    </style>
+	<script src="Theme/jquery-1.3.2.min.js"></script>
+	<script src="Theme/jquery-ui-1.7.2.custom.min.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function(){
+			$("#slider").slider({ min: 0, max: 100, step: 1, value: bp.volume * 100, animate: true, change: function(event, ui) { bp.setVolume(ui.value / 100) } });
+			$(".play").click(function() { bp.Pause(); $(".play").toggleClass("pause", bp.IsPlaying); }).toggleClass("pause", bp.IsPlaying);
+			$(".stop").click(function() { bp.Unload(false); });
+			$(".next").click(function() { bp.Next(); });
+		
+			if(!eval(localStorage["SkipDefault"])) AppendStation("Default", "");
+			var storedStations = eval(localStorage["Stations"]);
             if (storedStations) {
                 for (i = 0; i < storedStations.length; i++) {
 					var updatedSubset = UpdateSubset(storedStations[i].Subset);
-                    stations.appendChild(getStationLink(storedStations[i].Name, updatedSubset));
-					storedStations[i].Subset = updatedSubset;
+					AppendStation(storedStations[i].Name, updatedSubset);
+                    storedStations[i].Subset = updatedSubset;
                 }
             }
 			localStorage["Stations"] = JSON.stringify(storedStations);
 			
-            loadPlayerInfo();
-         }
-		 
+			loadPlayerInfo();
+		});
+
+        var bp = chrome.extension.getBackgroundPage();
+		bp.OnPositionChanged = loadPlayerInfo;
+		bp.OnImageLoaded = setImage;
+		
+		function LoadStation(config) {
+			bp.PopulatePlaylist(config, true, function() { $(".play").toggleClass("pause", true); $(".controls").fadeIn("slow"); bp.Play(); }, false);
+		}
+		
+		function loadPlayerInfo() {
+			if (!bp.AlbumImageLoaded) $(".albumimage").hide();
+			else $(".albumimage").css("background", "url(" + bp.CurrentData.album_image + ")").fadeIn("slow");
+
+			$(".title").html(bp.CurrentData.name);
+			$(".album").html(bp.CurrentData.album_name);
+			$(".artist").html(bp.CurrentData.artist_name);
+			
+			if(!bp.IsReady) $(".controls").hide();
+			else {
+				$(".album").click(function() { chrome.tabs.create({ "url": bp.CurrentData.album_url }); });
+				$(".artist").click(function() { chrome.tabs.create({ "url": bp.CurrentData.artist_url }); });
+				
+				animate(".title", 160); animate(".album", 185); animate(".artist", 185);
+				
+				if($(".controls").css("display") == "none")
+					$(".controls").fadeIn("slow");
+			}
+		}
+		
+		function setImage() {
+			$(".albumimage").hide().css("background", "url(" + bp.CurrentData.album_image + ")").fadeIn("slow");
+		}
+		
+		function AppendStation(name, config) {
+			var newHtml = "<a href='javascript:LoadStation(\"{0}\");'>{1}</a>";
+			$(".stations").append(sformat(newHtml, config, name));
+		}
+		
+		function animate(elementName, widthLimit) {
+			if(bp.IsReady && $(elementName).width() > widthLimit) {
+			var distance = $(elementName).width() - widthLimit;
+				$(elementName).animate( { marginLeft : distance * -1 }, 2000, "swing");
+				$(elementName).animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName, widthLimit); });
+			}
+			else {
+				$(elementName).stop(true).css("margin-left", "0");
+			}
+		}
+	
+		function sformat(inString, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) {
+			return inString.replace(/{(\d)}/g, function(m) { 
+				switch(m) {
+					case "{0}": return v1;
+					case "{1}": return v2;
+					case "{2}": return v3;
+					case "{3}": return v4;
+					case "{4}": return v5;
+					case "{5}": return v6;
+					case "{6}": return v7;
+					case "{7}": return v8;
+					case "{8}": return v9;
+					case "{9}": return v10;
+				}
+				return "";
+			});
+		}
 		var userAlerted = false;
-		 function UpdateSubset(subset)
-		 {
+		function UpdateSubset(subset)
+		{
 			if(subset.indexOf("/?") > -1) return subset;
 			var rxConfig = /[?&]?(\w+)=([\w+.]+)/g;
 
 			var joins = "";
 			var config = "";
-			
+
 			var setting = rxConfig.exec(subset);
 			if(setting && !userAlerted) alert('The substring format has been updated to support playlist and user starred albums.\n\nI will try to convert your channels into the new format.');
-			
+
 			while(setting) 
 			{ 
-				userAlerted = true;
-				
-				if(setting[1] == "tag_idstr")
-					joins += "+album_tag/";
+					userAlerted = true;
 					
-				if(!config) config += "?" + setting[1] + "=" + setting[2];
-				else config += "&" + setting[1] + "=" + setting[2];
+					if(setting[1] == "tag_idstr")
+							joins += "+album_tag/";
 							
-				setting = rxConfig.exec(subset);
+					if(!config) config += "?" + setting[1] + "=" + setting[2];
+					else config += "&" + setting[1] + "=" + setting[2];
+											
+					setting = rxConfig.exec(subset);
 			}
-			
+
 			if(!joins) joins = "/";
 			return joins + config;
-		 }
-		 
-		 
-		 
-		function animateLeft(elementName) {
-			var distance = $(elementName).width() - 315;
-			setTimeout(function() {
-			$(elementName).animate({ marginLeft: distance * -1 }, 2000, "", function() { animateRight(elementName); }); }, 1000);
 		}
-		function animateRight(elementName) {
-			var distance = $(elementName).width() - 315;
-			setTimeout(function() {
-			$(elementName).animate({ marginLeft: 0 }, 2000, "", function() { if($(elementName).width() > 315) animateLeft(elementName); }); }, 550);
-		}
-        function loadPlayerInfo() {
-			if($("#image").attr("src") != bp.CurrentData.album_image) setImage();
-			            
-            $("#name").html(bp.CurrentData.name).stop().css("margin-left", "0");
-			$("#artist_name").html(bp.CurrentData.artist_name).stop(true).css("margin-left", "0").toggleClass("empty", !bp.IsReady);            
-			$("#album_name").html(bp.CurrentData.album_name).stop(true).css("margin-left", "0").toggleClass("empty", !bp.IsReady);
-			
-			$("#play").toggleClass("paused", !bp.IsPlaying);
-			$("#stop").toggleClass("looped", bp.loop);
-			
-			if($("#name").width() > 315) animateLeft("#name");
-			if($("#artist_name").width() > 315) animateLeft("#artist_name");
-			if($("#album_name").width() > 315) animateLeft("#album_name");
-			
-            if (bp.CurrentData.album_url)
-                $("#album_name").click(function() { chrome.tabs.create({ "url": bp.CurrentData.album_url }); });
-            else
-                $("#album_name").click(function() { });
-
-			if (bp.CurrentData.artist_url)
-                $("#artist_name").click(function() { chrome.tabs.create({ "url": bp.CurrentData.artist_url }); });
-            else
-                $("#artist_name").click(function() { });
-				
-            if (bp.IsReady) {
-				$("#controls").show();
-				
-				$("#play").click(function() { bp.Pause(); $("#play").toggleClass("paused", !bp.IsPlaying); });
-				if(bp.loop) $("#stop").click(bp.Back);
-				else $("#stop").click(function() { bp.Unload(false); });
-				$("#next").click(bp.Next);
-				
-				
-				var knob = document.getElementById("volumeknob"); var slide = document.getElementById("volume"); 
-				knob.style.top = slide.offsetHeight - (bp.volume * slide.offsetHeight) + "px";
-            }
-            else {
-				$("#controls").hide();
-            }
-			
-			if($("body").width() > $("table").width())
-				$("table").width($("body").width());
-			else
-				$("table").width("auto");
-		}
-		
-		function setImage() {
-            if (bp.AlbumImageLoaded)
-				$("#image").fadeOut("slow", function() { $("#image").attr("src", bp.CurrentData.album_image).fadeIn("fast"); });
-            else {
-                $("#image").fadeOut("slow");
-				$("body").css("width", "auto");
-			}
-        }
-
-		function LoadStation(subset) {
-			bp.PopulatePlaylist(subset, true, function() { bp.Play(); $("#play").toggleClass("paused", !bp.IsPlaying); }, false);
-        }
-
-        function getStationLink(name, subset) {
-            var radio = document.createElement("a");
-            radio.onclick = function() { LoadStation(subset); };
-            radio.innerText = name;
-
-            return radio;
-        }
-		
-		function SetVolume(element) {
-			var knob = document.getElementById("volumeknob"); var slide = document.getElementById("volume");
-			
-			var offset = event.offsetY;
-			if(event.srcElement == knob)
-				offset += parseInt(knob.style.top);
-				
-			var volume = (slide.offsetHeight - offset) / slide.offsetHeight;
-					
-			knob.style.top = offset + "px";
-			bp.setVolume(volume);
-		}
-				
-		$(document).ready(function(){
-			main();
-		});
-    </script>
+	</script>
 </head>
 <body>
-    <table cellspacing="0" cellpadding="0" id="player">
-        <tr>
-            <td id="container" rowspan="3" style="width:105px;">
-                <div style="height:100px;background:url('Images/ajax-loader.gif') no-repeat 25px 15px;">
-                    <img id="image" alt="" src="" />&nbsp;
-                </div>
-            </td>
-            <td><div id="name" style="font-size: 1.5em;color:#135ABB;display:inline;"></div>
-            </td>
-			<td rowspan="4" style="min-width:16px;">
-				<div id="controls" class="disabled">
-					<a id="play" class="paused">&nbsp;</a>
-					<a id="stop">&nbsp;</a>
-					<a id="next">&nbsp;</a>
-					<div id="volume" onmousedown="SetVolume(this);" style="background:url(Images/volume_bg.png) repeat-y;width:16px;height:50px;">
-						<img id="volumeknob" src="Images/control_volume.png" style="position:relative;top:25px;" />
-					</div>
-				</div>
-				&nbsp;				
-			</td>
-        </tr>
-        <tr>
-            <td>
-                <a id="album_name" class="empty"></a></td>
-        </tr>
-        <tr>
-            <td>
-                <a id="artist_name" class="empty"></a></td>
-        </tr>
-		<tr>
-			<td colspan="3">
-				<hr style="width: 75%; color:#aaa;" />
-				<div id="stationContainer"><span id="stations" /></div>
-				<div id="slider"></div>
-			</td>
-		</tr>
-    </table>
-</body>
+	<div class="player">
+		<div class="albumloading"></div>
+		<div class="albumimage"></div>
+		<div class="info">
+			<a class="title"></a>
+			<a class="album"></a>
+			<a class="artist"></a>
+		</div>
+		<div class="controls">
+			<a class="play"></a>
+			<a class="next"></a>
+			<a class="stop"></a>
+		</div>
+	</div>
+	<div id="slider"></div>
+	<div class="stations">
+		</div>
+	</body>
 </html>
