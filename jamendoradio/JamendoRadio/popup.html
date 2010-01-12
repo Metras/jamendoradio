@@ -70,9 +70,9 @@
 			if (!bp.AlbumImageLoaded) $(".albumimage").hide();
 			else $(".albumimage").css("background", "url(" + bp.CurrentData.album_image + ")").fadeIn("slow");
 
-			$(".title").html(bp.CurrentData.name);
-			$(".album").html(bp.CurrentData.album_name);
-			$(".artist").html(bp.CurrentData.artist_name);
+			$(".title").stop(true).css("margin-left", "0").html(bp.CurrentData.name);
+			$(".album").stop(true).css("margin-left", "0").html(bp.CurrentData.album_name);
+			$(".artist").stop(true).css("margin-left", "0").html(bp.CurrentData.artist_name);
 			
 			if(!bp.IsReady) $(".controls").hide();
 			else {
@@ -96,13 +96,13 @@
 		}
 		
 		function animate(elementName, widthLimit) {
-			if(bp.IsReady && $(elementName).width() > widthLimit) {
+		if(bp.IsReady && $(elementName).width() > widthLimit) {
 			var distance = $(elementName).width() - widthLimit;
-				$(elementName).animate( { marginLeft : distance * -1 }, 2000, "swing");
-				$(elementName).animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName, widthLimit); });
-			}
-			else {
-				$(elementName).stop(true).css("margin-left", "0");
+				$(elementName)
+					.animate( { opacity: 1.0 }, 1500)
+					.animate( { marginLeft : distance * -1 }, 2000, "swing")
+					.animate( { opacity: 1.0 }, 700)
+					.animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName, widthLimit); });
 			}
 		}
 	
