@@ -3,7 +3,7 @@
     <style type="text/css">
 		body { width: 370px; overflow:hidden; }
 		a { cursor:hand; }
-		.player { background: url(background.png) no-repeat 0 15px; height: 180px; }
+		.player { background: url(Images/background.png) no-repeat 0 15px; height: 180px; }
 		.stations { text-align:center; width:370px; }
 		.stations a { color:#a1a1a1; margin:3px 4px; }
 		
@@ -17,23 +17,23 @@
 		.album { font-size: 10pt; color:#444343; }
 		.artist{ font-weight: bold; font-size: 10pt; color:#444343; }
 		
-		.play { position:absolute; top:0; left:300; background: url(play.png); width:80px;height:80px; }
-		.play:hover  { background:url(play-hover.png); }
-		.play:active { background:url(play-active.png); }
+		.play { position:absolute; top:0; left:300; background: url(Images/play.png); width:80px;height:80px; }
+		.play:hover  { background:url(Images/play-hover.png); }
+		.play:active { background:url(Images/play-active.png); }
 
-		.pause { background: url(pause.png)!important; }
-		.pause:hover  { background:url(pause-hover.png)!important; }
-		.pause:active { background:url(pause-active.png)!important; }
+		.pause { background: url(Images/pause.png)!important; }
+		.pause:hover  { background:url(Images/pause-hover.png)!important; }
+		.pause:active { background:url(Images/pause-active.png)!important; }
 		
-		.next { position:absolute; top:85; left:337; background: url(next.png); width:27px;height:27px; }
-		.next:active { background:url(next-active.png); }
+		.next { position:absolute; top:85; left:337; background: url(Images/next.png); width:27px;height:27px; }
+		.next:active { background:url(Images/next-active.png); }
 		
-		.stop { position:absolute; top:115; left:337; background: url(stop.png); width:27px;height:27px; }
-		.stop:active { background:url(stop-active.png); }
+		.stop { position:absolute; top:115; left:337; background: url(Images/stop.png); width:27px;height:27px; }
+		.stop:active { background:url(Images/stop-active.png); }
 		
 		.ui-slider { height:17px; position:absolute; width:145px; top:147px; left:190px;}
-		.ui-slider-handle { background:url(volume.png); width:17px;height:17px; position:absolute;}
-		.ui-slider-handle:active { background:url(volume-active.png); }
+		.ui-slider-handle { background:url(Images/volume.png); width:17px;height:17px; position:absolute;}
+		.ui-slider-handle:active { background:url(Images/volume-active.png); }
     </style>
 	<script src="Theme/jquery-1.3.2.min.js"></script>
 	<script src="Theme/jquery-ui-1.7.2.custom.min.js"></script>
@@ -165,9 +165,10 @@
 			<a class="play"></a>
 			<a class="next"></a>
 			<a class="stop"></a>
+			<div id="slider"></div>
 		</div>
 	</div>
-	<div id="slider"></div>
+
 	<div class="stations">
 		</div>
 	</body>

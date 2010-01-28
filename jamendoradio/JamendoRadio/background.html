@@ -42,7 +42,6 @@
 
     function PopulatePlaylist(settings, asRadio, onLoadCallback, prefetch) {
         var url;
-		console.log("Entereing method: PopulatePlaylist");
         if (!prefetch) {
 			Unload("loading");
 			if (!settings) settings = "/?order=ratingmonth_desc";
@@ -56,7 +55,6 @@
                 currentAPICall = url;
             } else loop = true;
         } else url = currentAPICall;
-		console.log("url: " + url);
 
         if (timeKeeper) return; //Prevent spamming
         timeKeeper = setTimeout(function () { timeKeeper = null; }, 1500);
