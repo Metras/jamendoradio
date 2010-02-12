@@ -238,6 +238,7 @@
     Unload();
 	
 	function InitScrobble() {
+		if(!eval(localStorage["Scrobble"])) return;
 		var usr = eval(localStorage["ScrobbleUsername"]);
 		var pwd = eval(localStorage["ScrobblePassword"]);
 		
@@ -253,6 +254,7 @@
     var _ready = false; var _sessionId; var _np_url; var _sub_url;
     this.Handshake = function(user, passwordHash) {
 		if(!eval(localStorage["Scrobble"])) return;
+		if(!user || !passwordHash) return;
 		
         var ts = Math.round(new Date().getTime() / 1000);
         var auth_token = hex_md5(passwordHash + ts);
