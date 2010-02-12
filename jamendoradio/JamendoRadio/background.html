@@ -281,17 +281,44 @@
 	var _cd;
     this.NowPlaying = function() {
 		if(!_ready || !eval(localStorage["Scrobble"])) return;
-		_cd = {
-			'a':urlencode(CurrentData.artist_name),
-			'b':urlencode(CurrentData.album_name),
-			't':urlencode(CurrentData.name),
-			'l':Math.round(audio.duration),
-			'n':"",
-			'm':"",
-			'i':Math.round(new Date().getTime() / 1000)
-		};
+		if(CurrentData.artist_name == "# Psytrance Brazil #") { //DIRTY DIRTY!!!
+			var fixedArtist; var fixedAlbum; var fixedTrack; var dashIndex;
+			
+			if(CurrentData.album_name.indexOf('-') > -1) {
+				dashIndex = CurrentData.album_name.indexOf('-');
+				fixedAlbum = CurrentData.album_name.substr(dashIndex + 1);
+				fixedArtist = CurrentData.album_name.substr(0, dashIndex - 1);
+			} else fixedAlbum = CurrentData.album_name;
+			if(CurrentData.name.indexOf('-') > -1) {
+				dashIndex = CurrentData.name.indexOf('-');
+				fixedTrack = CurrentData.name.substr(dashIndex + 1);
+				fixedArtist = CurrentData.name.substr(0, dashIndex - 1);
+			} else fixedTrack = CurrentData.name;
+			if(!fixedArtist || !fixedAlbum || !fixedTrack) return;
+			_cd = {
+				'a':urlencode(fixedArtist),
+				'b':urlencode(fixedAlbum),
+				't':urlencode(fixedTrack),
+				'l':Math.round(audio.duration),
+				'n':"",
+				'm':"",
+				'i':Math.round(new Date().getTime() / 1000)		
+			}
+		} else {
+			_cd = {
+				'a':urlencode(CurrentData.artist_name),
+				'b':urlencode(CurrentData.album_name),
+				't':urlencode(CurrentData.name),
+				'l':Math.round(audio.duration),
+				'n':"",
+				'm':"",
+				'i':Math.round(new Date().getTime() / 1000)
+			};
+		}
+		
 		if(_endpoint.indexOf('jamendo') > -1)
 			_cd.m = urlencode("jamendo.com/track/" + CurrentData.id);
+		
 		
 		var post_string = sformat("?s={0}&a={1}&b={2}&t={3}&l={4}&n={5}&m={6}",
 			_sessionId, _cd.a, _cd.b, _cd.t, _cd.l, _cd.n, _cd.m);
