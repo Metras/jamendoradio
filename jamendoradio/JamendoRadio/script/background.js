@@ -27,10 +27,10 @@ function getCurrent(dataUpdatedCallback) {
 var Initialized = false;
 function init() {
 	audio.addEventListener("ended", function() {
-		Next(); Play();
+		Next(true);
 	}, false);
 	audio.addEventListener("playing", function() {
-		if(_current.Dirty) scrobbleNowPlaying(); _current.Dirty = false;
+		if(_current.Dirty) scrobblers.nowPlaying(); _current.Dirty = false;
 	}, false);
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
         if (request.target) {
@@ -41,8 +41,8 @@ function init() {
                 case "loadArtistRadio": LoadArtist(request.data); break;
                 case "loadPlayList": LoadPlayList(request.data); break;
                 case "loadRadioPlayList": LoadJamRadio(request.data); break;
-				case "scrobbleReady": sendResponse(as.IsReady()); return;
-				case "scrobbleInit": InitScrobble(); break;
+				case "scrobbleReady": sendResponse(scrobblers.ready()); return;
+				case "scrobbleInit": scrobblers.init(); break;
             }
             sendResponse();
         }
@@ -52,21 +52,22 @@ function init() {
 	
 	scrobblers = {
 		'audioscrobbler':new Scrobbler("http://post.audioscrobbler.com/", "jmn", "1.0"), //Scrobble to last.fm
-		'jamendo':new Scrobbler("http://postaudioscrobbler.jamendo.com/", "tst", "1.0")  //Scrobble to Jamendo
+		'jamendo':new Scrobbler("http://postaudioscrobbler.jamendo.com/", "tst", "1.0"), //Scrobble to Jamendo
+		'ready':function() { return this.audioscrobbler.IsReady() || this.jamendo.IsReady() },
+		'init':function() { if(storage.Scrobble && storage.ScrobbleUsername && storage.ScrobblePassword) 
+			scrobblers.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobblePassword); },
+		'nowPlaying':function() { if(!this.ready()) this.init(); this.aso = getScrobbleObject(_current); this.audioscrobbler.NowPlaying(this.aso); },
+		'submit':function() { if(!this.aso) return; if(this.audioscrobbler.Submit(this.aso)) this.clear(); },
+		'clear':function() { this.aso = false; }
 	}
 	jamendo = new Jamendo();
 	jamendo.onPlaylistLoaded(PlaylistDataRecieved);
 	storage = new Storage();
 	_current = new Current();
 	
-	if(storage.Scrobble) {
-		if(storage.ScrobbleUsername && storage.ScrobbleUsername)
-			scrobblers.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobbleUsername);
-	}
+	scrobblers.init();
 	
 	Initialized = true;
-	
-	
 }
 
 //Internals
@@ -84,6 +85,7 @@ function Current() {
 	this.Update = function() {
 		if(!_onChange) return;
 		
+		try {
 		if(this.AlbumImageUrl == 'loading') {
 			_onChange(_current, false);
 		} else if(cachedAlbumUrls.contains(this.AlbumImageUrl)) {
@@ -93,11 +95,12 @@ function Current() {
 			albumImage.onload = function () { cachedAlbumUrls[cachedAlbumUrls.length] = this.src; _current.Update();  }
 			albumImage.src = this.AlbumImageUrl;
 			_onChange(_current, false);
-		}
+		}} catch(err) {}
 	}
 	
-	this.SetInfo = function(track, album, albumImageUrl, albumUrl, artist, artistUrl) {
+	this.SetInfo = function(track, trackId, album, albumImageUrl, albumUrl, artist, artistUrl) {
 		this.Track = track;
+		this.TrackId = trackId,
 		this.Album = album;
 		this.AlbumImageUrl = albumImageUrl;
 		this.AlbumUrl = albumUrl;
@@ -110,6 +113,7 @@ function Current() {
 	
 	this.Unload = function() {
 		this.Track = 'No radio loaded';
+		this.TrackId = 0;
 		this.Album = 'Please select a';
 		this.AlbumImageUrl = '../styles/splash.jpg';
 		this.AlbumUrl = '';
@@ -122,6 +126,7 @@ function Current() {
 	
 	this.Fetching = function() {
 		this.Track = 'Radio loading...';
+		this.TrackId = 0;
 		this.Album = 'Please wait while';
 		this.AlbumImageUrl = 'loading';
 		this.AlbumUrl = '';
@@ -145,6 +150,7 @@ function PlaylistDataRecieved(playlist) {
 
 function UpdatePosition(newIndex) {
 	_currentIndex = newIndex;
+	scrobblers.submit(); scrobblers.clear();
 	
 	var data;
 	if(_currentIndex >= _playlist.length) {
@@ -153,8 +159,8 @@ function UpdatePosition(newIndex) {
 		else { _current.Unload(); return; }
 	}
 	var data = _playlist[_currentIndex];
-	_current.SetInfo(data.name, data.album_name, data.album_image, data.album_url, data.album_name, data.album_url);
-
+	_current.SetInfo(data.name, data.id, data.album_name, data.album_image, data.album_url, data.album_name, data.album_url);
+	
 	audio.src = data.stream;
 	audio.volume = 1;
 	audio.load();
@@ -188,10 +194,11 @@ function PPlay() {
 	if(_current.Playing()) audio.pause();
 	else if (_current.Loaded()) audio.play();
 	audio.volume = Volume;
+	scrobblers.submit();
 }
 
-function Next() {
-	if(_current.Playing()) {
+function Next(forcePlay) {
+	if(forcePlay || _current.Playing()) {
 		UpdatePosition(_currentIndex + 1);
 		Play();
 	} else {
@@ -201,7 +208,8 @@ function Next() {
 function Stop() {
 	audio.src = "";
 	audio.load();
-	
+	scrobblers.submit();
+	scrobblers.clear();
 	_current.Unload();
 }
-
+init();

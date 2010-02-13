@@ -6,6 +6,7 @@ function loadSkin() {
 	getState().getCurrent(setPlayerInfo);
 }
 function setPlayerInfo(data, albumImageLoaded) {
+	if(!data) return;
 	if(!albumImageLoaded) $(".albumimage").hide();
 	else $(".albumimage").css("background", "url(" + data.AlbumImageUrl + ")").fadeIn("slow");
 
@@ -31,6 +32,7 @@ function setPlayerInfo(data, albumImageLoaded) {
 }
 
 function loadStations() {
+	if(!storage.SkipDefault) AppendStation('Default', '/?order=ratingmonth_desc');
 	for (i = 0; i < storage.Stations.length; i++) {
 		AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset);
 	}
