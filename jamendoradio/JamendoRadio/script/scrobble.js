@@ -39,7 +39,7 @@ function Scrobbler(endpoint, clientId, clientVersion) {
 	
 		// Check if scrobbling is allowed
 		if(cd.l < 30)
-			console.log('Track "' + _cd.t + '" is too short for scrobbling.');
+			console.log('Track "' + cd.t + '" is too short for scrobbling.');
 			
 		var cts = timeStamp();
 		if((cts - cd.i >= 240) || (cts - cd.i > cd.l / 2)) {
@@ -52,7 +52,7 @@ function Scrobbler(endpoint, clientId, clientVersion) {
 			return true;
 		} else {
 			//Guess not
-			console.log('Track "' + _cd.t + '" has been prematurely ended, and does not qualify for scrobbling.');
+			console.log('It is way too soon to scrobble track "' + cd.t + '".');
 		}
 		return false;
     }

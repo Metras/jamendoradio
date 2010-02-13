@@ -40,9 +40,10 @@
 				localStorage["ScrobbleUsername"] = JSON.stringify(usr);
 				localStorage["ScrobblePassword"] = JSON.stringify(hex_md5(pwd));
 				
-				chrome.extension.sendRequest({target: "scrobbleInit"},function(response){});
 				document.getElementById("scrPassword").value = ""; pwd = "";
 			}
+			
+			chrome.extension.sendRequest({target: "scrobbleInit"},function(response){});
 		}
 		
         function restore_options() {

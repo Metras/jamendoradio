@@ -159,7 +159,7 @@ function UpdatePosition(newIndex) {
 		else { _current.Unload(); return; }
 	}
 	var data = _playlist[_currentIndex];
-	_current.SetInfo(data.name, data.id, data.album_name, data.album_image, data.album_url, data.album_name, data.album_url);
+	_current.SetInfo(data.name, data.id, data.album_name, data.album_image, data.album_url, data.artist_name, data.artist_url);
 	
 	audio.src = data.stream;
 	audio.volume = 1;
@@ -182,11 +182,13 @@ function SetVolume(vol) {
 	Volume = vol;
 	audio.volume = vol;
 }
-function Play() {	
+function Play() {
+	console.log('Play');
 	if(_current.Loaded()) audio.play();
 	audio.volume = Volume;
 }
 function Pause() {
+	console.log('Pause');
 	if(_current.Playing()) audio.pause();
 }
 function PPlay() {
@@ -198,6 +200,7 @@ function PPlay() {
 }
 
 function Next(forcePlay) {
+	console.log('Next');
 	if(forcePlay || _current.Playing()) {
 		UpdatePosition(_currentIndex + 1);
 		Play();
@@ -206,10 +209,14 @@ function Next(forcePlay) {
 	}
 }
 function Stop() {
+	console.log('Stop');
 	audio.src = "";
 	audio.load();
+	_playlist = false;
 	scrobblers.submit();
 	scrobblers.clear();
 	_current.Unload();
 }
+
+//Lets roll!
 init();
