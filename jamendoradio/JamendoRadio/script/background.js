@@ -30,7 +30,7 @@ function init() {
 		Next(); Play();
 	}, false);
 	audio.addEventListener("playing", function() {
-		//if(new_song) { new_song = false; as.NowPlaying(); js.NowPlaying(); }
+		if(_current.Dirty) scrobbleNowPlaying(); _current.Dirty = false;
 	}, false);
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
         if (request.target) {
@@ -58,7 +58,15 @@ function init() {
 	jamendo.onPlaylistLoaded(PlaylistDataRecieved);
 	storage = new Storage();
 	_current = new Current();
+	
+	if(storage.Scrobble) {
+		if(storage.ScrobbleUsername && storage.ScrobbleUsername)
+			scrobblers.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobbleUsername);
+	}
+	
 	Initialized = true;
+	
+	
 }
 
 //Internals
@@ -66,6 +74,8 @@ function Current() {
 	this.Ready = function() { if(_playlist) return true; return false; }
 	this.Loaded = function() { if(audio.src) return true; return false; }
 	this.Playing = function() { return this.Loaded() && !audio.paused; }
+	
+	this.Dirty = false;
 	
 	var _onChange = false;
 	this.onChange = function(callback) { _onChange = callback; if(!this.Ready()) this.Unload(); else this.Update();}
@@ -86,6 +96,18 @@ function Current() {
 		}
 	}
 	
+	this.SetInfo = function(track, album, albumImageUrl, albumUrl, artist, artistUrl) {
+		this.Track = track;
+		this.Album = album;
+		this.AlbumImageUrl = albumImageUrl;
+		this.AlbumUrl = albumUrl;
+		this.Artist = artist;
+		this.ArtistUrl = artistUrl;
+		
+		this.Update();
+		this.Dirty = true;
+	}
+	
 	this.Unload = function() {
 		this.Track = 'No radio loaded';
 		this.Album = 'Please select a';
@@ -95,6 +117,7 @@ function Current() {
 		this.ArtistUrl = '';
 		
 		this.Update();
+		this.Dirty = false;
 	}
 	
 	this.Fetching = function() {
@@ -106,6 +129,7 @@ function Current() {
 		this.ArtistUrl = '';
 		
 		this.Update();
+		this.Dirty = false;
 	}
 }
 
@@ -129,15 +153,8 @@ function UpdatePosition(newIndex) {
 		else { _current.Unload(); return; }
 	}
 	var data = _playlist[_currentIndex];
-	_current.Track = data.name;
-	_current.Album = data.album_name;
-	_current.AlbumImageUrl = data.album_image;
-	_current.AlbumUrl = data.album_url;
-	_current.Artist = data.album_name;
-	_current.ArtistUrl = data.album_url;
+	_current.SetInfo(data.name, data.album_name, data.album_image, data.album_url, data.album_name, data.album_url);
 
-	_current.Update();
-	
 	audio.src = data.stream;
 	audio.volume = 1;
 	audio.load();
