@@ -1,155 +1,22 @@
 <html>
 <head>
-    <style type="text/css">
-		body { width: 370px; overflow:hidden; }
-		a { cursor:hand; }
-		.player { background: url(Images/background.png) no-repeat 0 15px; height: 180px; }
-		.stations { text-align:center; width:370px; }
-		.stations a { color:#a1a1a1; margin:3px 4px; }
-		
-		.albumimage, .albumloading { position:absolute; top:47;left:31; width:100px;height:100px; }
-		.albumloading { background:url(Images/ajax-loader.gif) no-repeat 20px 20px; }
-		
-		.info { position:absolute; top:48;left:140; width:210px; overflow:hidden; }
-		.info a { font-family: verdana; float:left; clear:both; white-space:nowrap;  }
-		
-		.title { font-size: 16pt; color:#a031aa; cursor:default!important; margin-bottom:4px; }
-		.album { font-size: 10pt; color:#444343; }
-		.artist{ font-weight: bold; font-size: 10pt; color:#444343; }
-		
-		.play { position:absolute; top:0; left:300; background: url(Images/play.png); width:80px;height:80px; }
-		.play:hover  { background:url(Images/play-hover.png); }
-		.play:active { background:url(Images/play-active.png); }
-
-		.pause { background: url(Images/pause.png)!important; }
-		.pause:hover  { background:url(Images/pause-hover.png)!important; }
-		.pause:active { background:url(Images/pause-active.png)!important; }
-		
-		.next { position:absolute; top:85; left:337; background: url(Images/next.png); width:27px;height:27px; }
-		.next:active { background:url(Images/next-active.png); }
-		
-		.stop { position:absolute; top:115; left:337; background: url(Images/stop.png); width:27px;height:27px; }
-		.stop:active { background:url(Images/stop-active.png); }
-		
-		.ui-slider { height:17px; position:absolute; width:145px; top:147px; left:190px;}
-		.ui-slider-handle { background:url(Images/volume.png); width:17px;height:17px; position:absolute;}
-		.ui-slider-handle:active { background:url(Images/volume-active.png); }
     </style>
-	<script src="Theme/jquery-1.3.2.min.js"></script>
-	<script src="Theme/jquery-ui-1.7.2.custom.min.js"></script>
-    <script type="text/javascript">
+	<script type="text/javascript" src="script/util.js"></script>
+	<script type="text/javascript" src="script/popup.js"></script>    
+	<script type="text/javascript">
 		$(document).ready(function(){
-			$("#slider").slider({ min: 0, max: 100, step: 1, value: bp.volume * 100, animate: true, change: function(event, ui) { bp.setVolume(ui.value / 100) } });
-			$(".play").click(function() { bp.Pause(); $(".play").toggleClass("pause", bp.IsPlaying); }).toggleClass("pause", bp.IsPlaying);
-			$(".stop").click(function() { bp.Unload(false); });
-			$(".next").click(function() { bp.Next(); });
+			var temp = '	<link rel="StyleSheet" href="styles/popup.css" type="text/css">';
+			storage = new Storage();
+			loadSkin();
+			loadStations();
+
+			$("#slider").slider({ min: 0, max: 100, step: 1, value: getState().Volume * 100, animate: true, change: function(event, ui) { getState().SetVolume(ui.value / 100) } });
+			$(".play").click(function() { getState().PPlay(); $(".play").toggleClass("pause", getState()._current.Playing()); });
+			$(".stop").click(function() { getState().Stop(); });
+			$(".next").click(function() { getState().Next(); });
+});
 		
-			if(!eval(localStorage["SkipDefault"])) AppendStation("Default", "");
-			var storedStations = eval(localStorage["Stations"]);
-            if (storedStations) {
-                for (i = 0; i < storedStations.length; i++) {
-					var updatedSubset = UpdateSubset(storedStations[i].Subset);
-					AppendStation(storedStations[i].Name, updatedSubset);
-                    storedStations[i].Subset = updatedSubset;
-                }
-            }
-			localStorage["Stations"] = JSON.stringify(storedStations);
 			
-			loadPlayerInfo();
-		});
-
-        var bp = chrome.extension.getBackgroundPage();
-		bp.OnPositionChanged = loadPlayerInfo;
-		bp.OnImageLoaded = setImage;
-		
-		function LoadStation(config) {
-			bp.PopulatePlaylist(config, true, function() { $(".play").toggleClass("pause", true); $(".controls").fadeIn("slow"); bp.Play(); }, false);
-		}
-		
-		function loadPlayerInfo() {
-			if (!bp.AlbumImageLoaded) $(".albumimage").hide();
-			else $(".albumimage").css("background", "url(" + bp.CurrentData.album_image + ")").fadeIn("slow");
-
-			$(".title").stop(true).css("margin-left", "0").html(bp.CurrentData.name);
-			$(".album").stop(true).css("margin-left", "0").html(bp.CurrentData.album_name);
-			$(".artist").stop(true).css("margin-left", "0").html(bp.CurrentData.artist_name);
-			
-			if(!bp.IsReady) $(".controls").hide();
-			else {
-				$(".album").click(function() { chrome.tabs.create({ "url": bp.CurrentData.album_url }); });
-				$(".artist").click(function() { chrome.tabs.create({ "url": bp.CurrentData.artist_url }); });
-				
-				animate(".title", 160); animate(".album", 185); animate(".artist", 185);
-				
-				if($(".controls").css("display") == "none")
-					$(".controls").fadeIn("slow");
-			}
-		}
-		
-		function setImage() {
-			$(".albumimage").hide().css("background", "url(" + bp.CurrentData.album_image + ")").fadeIn("slow");
-		}
-		
-		function AppendStation(name, config) {
-			var newHtml = "<a href='javascript:LoadStation(\"{0}\");'>{1}</a>";
-			$(".stations").append(sformat(newHtml, config, name));
-		}
-		
-		function animate(elementName, widthLimit) {
-		if(bp.IsReady && $(elementName).width() > widthLimit) {
-			var distance = $(elementName).width() - widthLimit;
-				$(elementName)
-					.animate( { opacity: 1.0 }, 1500)
-					.animate( { marginLeft : distance * -1 }, 2000, "swing")
-					.animate( { opacity: 1.0 }, 700)
-					.animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName, widthLimit); });
-			}
-		}
-	
-		function sformat(inString, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) {
-			return inString.replace(/{(\d)}/g, function(m) { 
-				switch(m) {
-					case "{0}": return v1;
-					case "{1}": return v2;
-					case "{2}": return v3;
-					case "{3}": return v4;
-					case "{4}": return v5;
-					case "{5}": return v6;
-					case "{6}": return v7;
-					case "{7}": return v8;
-					case "{8}": return v9;
-					case "{9}": return v10;
-				}
-				return "";
-			});
-		}
-		var userAlerted = false;
-		function UpdateSubset(subset) {
-			if(subset.indexOf("/?") > -1) return subset;
-			var rxConfig = /[?&]?(\w+)=([\w+.]+)/g;
-
-			var joins = "";
-			var config = "";
-
-			var setting = rxConfig.exec(subset);
-			if(setting && !userAlerted) alert('The configuration string format has been updated to support playlist and user starred albums.\n\nI will try to convert your channels into the new format.');
-
-			while(setting) 
-			{ 
-					userAlerted = true;
-					
-					if(setting[1] == "tag_idstr")
-							joins += "+album_tag/";
-							
-					if(!config) config += "?" + setting[1] + "=" + setting[2];
-					else config += "&" + setting[1] + "=" + setting[2];
-											
-					setting = rxConfig.exec(subset);
-			}
-
-			if(!joins) joins = "/";
-			return joins + config;
-		}
 	</script>
 </head>
 <body>
