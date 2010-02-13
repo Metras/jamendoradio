@@ -5,6 +5,7 @@
     <script src="script/util.js"></script>
     <script type="text/javascript">
         var idCounter = 0;
+		var storage = new Storage();
 		setInterval(function() {
 			chrome.extension.sendRequest({target: "scrobbleReady"}, function(response) { 
 				if(response) $("#scrobblestatus").css('color', 'green').text('Connection detected');
@@ -16,29 +17,29 @@
             var options = new Array();
 			$(".channelRow").each(function() { options[options.length] = { "Name":this.children[1].children[0].value, "Subset": this.children[3].children[0].value }; });
 			
-            localStorage["Stations"] = JSON.stringify(options);
+            storage.setStations(options);
 		}
 		
 		function restore_channels() {
             $(".channel").remove();
 			
-			var stations = eval(localStorage["Stations"]);
+			var stations = storage.Stations;
 			for (i = 0; i < stations.length; i++) {
                 AddChannel(stations[i].Name, stations[i].Subset);
             }		
 		}
 		
 		function save_options() {
-			localStorage["SiteIntegration"] = JSON.stringify(document.getElementById("pageIntegration").checked);
-            localStorage["SkipDefault"] = JSON.stringify(document.getElementById("skipDefault").checked);
-			localStorage["Scrobble"] = JSON.stringify(document.getElementById("scrobble").checked);
+			storage.setSiteIntegration(document.getElementById("pageIntegration").checked);
+            storage.setSkipDefault(document.getElementById("skipDefault").checked);
+			storage.setScrobble(document.getElementById("scrobble").checked);
 			
 			var usr = document.getElementById("scrUsername").value;
 			var pwd = document.getElementById("scrPassword").value;
 			
 			if(usr && pwd) {
-				localStorage["ScrobbleUsername"] = JSON.stringify(usr);
-				localStorage["ScrobblePassword"] = JSON.stringify(hex_md5(pwd));
+				storage.setScrobbleUsername(usr);
+				storage.setScrobblePassword(hex_md5(pwd));
 				
 				document.getElementById("scrPassword").value = ""; pwd = "";
 			}
@@ -47,11 +48,11 @@
 		}
 		
         function restore_options() {
-			document.getElementById("pageIntegration").checked = eval(localStorage["SiteIntegration"]);
-			document.getElementById("skipDefault").checked = eval(localStorage["SkipDefault"]);
-			document.getElementById("scrobble").checked = eval(localStorage["Scrobble"]);
+			document.getElementById("pageIntegration").checked = storage.SiteIntegration;
+			document.getElementById("skipDefault").checked = storage.SkipDefault;
+			document.getElementById("scrobble").checked = storage.Scrobble;
 			
-			document.getElementById("scrUsername").value = eval(localStorage["ScrobbleUsername"]) || "";
+			document.getElementById("scrUsername").value = storage.ScrobbleUsername || "";
 			/* No point in restoring the password. It's been eaten up by the MD5 algorithm */
         }
 
