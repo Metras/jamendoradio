@@ -50,7 +50,7 @@ function Jamendo(fields, settings, endpoint) {
 
 	this.loadTracks = function(ids) {
 		var configString = '/?id=';
-		if(ids.length)
+		if(!ids.substr)
 			configString += concat(ids);
 		else
 			configString += ids;
@@ -59,31 +59,40 @@ function Jamendo(fields, settings, endpoint) {
 	}
 	
 	this.loadAlbums = function(ids, order) {
-		var configString = '/?order=' + order || (ids.length ? 'random&n=5&nshuffle=500' : 'numalbum_asc') + '&album_id=';
-		if(ids.length)
-			configString += concat(ids);
-		else
-			configString += ids;
+		var configString = '/?order=';
+		if(order) configString += order;
+		else if(ids.substr) configString += 'numalbum_asc';
+		else configString += 'random&n=5&nshuffle=500';
+		configString += '&album_id=';
+		
+		if(!ids.substr) configString += concat(ids);
+		else configString += ids;
 		
 		this.loadPlaylist(configString);
 	}
 	
 	this.loadJamRadio = function(ids, order) {
-		var configString = '+radio_track_inradioplaylist/?order=' + order || (ids.length ? 'random&n=5&nshuffle=500' : 'numradio_asc') + '&radio_id=';
-		if(ids.length)
-			configString += concat(ids);
-		else
-			configString += ids;
+		var configString = '+radio_track_inradioplaylist/?order=';
+		if(order) configString += order;
+		else if(ids.substr) configString += 'numradio_asc';
+		else configString += 'random&n=5&nshuffle=500';
+		configString += '&radio_id=';
+		
+		if(!ids.substr) configString += concat(ids);
+		else configString += ids;
 		
 		this.loadPlaylist(configString);
 	}
 
-	this.loadJamplaylist = function(ids, order) {
-		var configString = '+playlist_track/?order=' + order || (ids.length ? 'random&n=5&nshuffle=500' : 'numplaylist_asc') + '&playlist_id=';
-		if(ids.length)
-			configString += concat(ids);
-		else
-			configString += ids;
+	this.loadJamPlaylist = function(ids, order) {
+		var configString = '+playlist_track/?order=';
+		if(order) configString += order;
+		else if(ids.substr) configString += 'numplaylist_asc';
+		else configString += 'random&n=5&nshuffle=500';
+		configString += '&playlist_id=';
+		
+		if(!ids.substr) configString += concat(ids);
+		else configString += ids;
 		
 		this.loadPlaylist(configString);
 	}

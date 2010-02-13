@@ -35,12 +35,9 @@ function init() {
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
         if (request.target) {
             switch (request.target) {
-                case "manipulatePage": sendResponse({ GoAhead: storage.SiteIntegration }); return;
-                case "loadAlbumPlayList": LoadAlbum(request.data); break;
-                case "loadTrackPlayList": LoadTrack(request.data); break;
-                case "loadArtistRadio": LoadArtist(request.data); break;
-                case "loadPlayList": LoadPlayList(request.data); break;
-                case "loadRadioPlayList": LoadJamRadio(request.data); break;
+                case "siteIntegration": sendResponse({ GoAhead: storage.SiteIntegration }); return;
+                case "loadFromMainPage": LoadFromMainpage(request); break;
+				case "overrideStartIndex": overrideStartIndex = request.startIndex; break;
 				case "scrobbleReady": sendResponse(scrobblers.ready()); return;
 				case "scrobbleInit": scrobblers.init(); break;
             }
@@ -138,24 +135,31 @@ function Current() {
 	}
 }
 
+var overrideStartIndex = false;
 function PlaylistDataRecieved(playlist) {
 	if(_prefetching) {
 		_prefetchlist = playlist;
+		_prefetching = false;
 	} else {
 		_playlist = playlist;
-		UpdatePosition(0);
+		if(overrideStartIndex) { 
+			UpdatePosition(overrideStartIndex);
+			overrideStartIndex = false;
+		} else {
+			UpdatePosition(0);
+		}
 		Play();
 	}
 }
 
 function UpdatePosition(newIndex) {
-	_currentIndex = newIndex;
+	_currentIndex = newIndex; audio.pause();
 	scrobblers.submit(); scrobblers.clear();
 	
 	var data;
 	if(_currentIndex >= _playlist.length) {
 		if(_prefetchlist) { _playlist = _prefetchlist; _prefetchlist = false; UpdatePosition(0); return; } 
-		else if(repeat) { UpdatePosition(0); return; }
+		else if(_repeat) { UpdatePosition(0); return; }
 		else { _current.Unload(); return; }
 	}
 	var data = _playlist[_currentIndex];
@@ -174,10 +178,21 @@ function LoadStation(config) {
 	config += "&n=5";
 	if(config.indexOf("order=random") == -1)
 		config += "&nshuffle=500";
-	repeat = false;
+	_repeat = false;
 		
 	jamendo.loadPlaylist(config);
 }
+function LoadFromMainpage(info) {
+	if(!info.set) return;
+	switch(info.set) {
+		case 'radio': jamendo.loadRadio(info.data); _repeat = false; break;
+		case 'playlist': jamendo.loadJamPlaylist(info.data); _repeat = false; break;
+		case 'artist': jamendo.loadArtist(info.data); _repeat = false; break;
+		case 'album': jamendo.loadAlbums(info.data); _repeat = false; break;
+		case 'track': overrideStartIndex = info.index; jamendo.loadTracks(info.data); _repeat = info.index; break;
+	}
+}
+
 function SetVolume(vol) {
 	Volume = vol;
 	audio.volume = vol;
@@ -201,12 +216,15 @@ function PPlay() {
 
 function Next(forcePlay) {
 	console.log('Next');
+	if(_currentIndex + 1 >= _playlist.length && _playlist.length > 1) { _prefetching = true; jamendo.loadPlaylist(); }
+	
 	if(forcePlay || _current.Playing()) {
 		UpdatePosition(_currentIndex + 1);
 		Play();
 	} else {
 		UpdatePosition(_currentIndex + 1);
 	}
+	
 }
 function Stop() {
 	console.log('Stop');

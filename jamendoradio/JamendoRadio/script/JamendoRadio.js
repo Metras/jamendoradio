@@ -1,3 +1,5 @@
+var jmdControl;
+
 function manipulatePage() {
 	overrideLinks("txtorange");
     overrideLinks("trackstable_play");
@@ -37,7 +39,7 @@ function overrideLinks(cssClass, containerId) {
 function createArtistRadio(cssClass) {
 	var playButton = document.body.getElementsByClassName(cssClass)[0];
 	playButton.onclick = function() {
-	    chrome.extension.sendRequest({ target: "loadArtistRadio", data: /artist\/([\w\.%]+)/.exec(location.href)[1] }, function (response) { }); 
+	    chrome.extension.sendRequest({ target: "loadFromMainPage",set:'artist',data: /artist\/([\w\.%]+)/.exec(location.href)[1] }, function (response) { }); 
 		return false;
 	}
 }
@@ -47,28 +49,28 @@ function start() {
     var rxTrack = new RegExp("\\?id=(\\d+)");
     var rxAlbum = new RegExp("album\\/(\\d+)'");
     var rxPlaylist = new RegExp("playlist\\/(\\d+)'");
-    var rxMisc = new RegExp("misc/([\\d+/]+)");
-    var rxMiscId = new RegExp("\\d+", "g");
-    var rxMiscIndex = new RegExp("/(\\d*)");
-
-    if (this.innerHTML.match(rxRadio))
-        chrome.extension.sendRequest({ target: "loadRadioPlayList", data: rxRadio.exec(this.innerHTML)[1] }, function (response) { });
-    else if (this.innerHTML.match(rxTrack))
-        chrome.extension.sendRequest({ target: "loadTrackPlayList", data: rxTrack.exec(this.innerHTML)[1] }, function (response) { });
-    else if (this.innerHTML.match(rxAlbum))
-        chrome.extension.sendRequest({ target: "loadAlbumPlayList", data: rxAlbum.exec(this.innerHTML)[1] }, function (response) { });
-    else if (this.innerHTML.match(rxPlaylist))
-        chrome.extension.sendRequest({ target: "loadPlayList", data: rxPlaylist.exec(this.innerHTML)[1] }, function (response) { });
-
-    else if (this.innerHTML.match(rxMisc)) {
-        var ids = rxMisc.exec(this.innerHTML)[1];
-        var index = parseInt(rxMiscIndex.exec(ids)[1]);
-
-        for (i = 0; i < index; i++) rxMiscId.exec(ids);
-        chrome.extension.sendRequest({ target: "loadTrackPlayList", data: rxMiscId.exec(ids)[0] }, function (response) { });
-    }
-
+    var rxMisc = new RegExp("\\?track_id=(\\d+)");
+	
+	var data; var set; var index;
+	
+    if (this.innerHTML.match(rxRadio)) {
+		set = 'radio';
+		data = rxRadio.exec(this.innerHTML)[1];
+	} else if (this.innerHTML.match(rxTrack)) {
+		set = 'track';
+		data = rxTrack.exec(this.innerHTML)[1];
+    } else if (this.innerHTML.match(rxAlbum)) {
+		set = 'album';
+		data = rxAlbum.exec(this.innerHTML)[1];
+    } else if (this.innerHTML.match(rxPlaylist)) {
+		set = 'playlist';
+		data = rxPlaylist.exec(this.innerHTML)[1];
+    } else if (this.innerHTML.match(rxMisc)) {
+		set = 'track';
+		data = rxMisc.exec(this.innerHTML)[1];
+    } else return;
+	
+	chrome.extension.sendRequest({target:"loadFromMainPage",set:set,data:data,index:index}, function (response) { });
     return false;
 }
-
-chrome.extension.sendRequest({target: "manipulatePage"}, function(response) { if(response.GoAhead) manipulatePage(); });
+chrome.extension.sendRequest({target: "siteIntegration"}, function(response) { if(response.GoAhead) manipulatePage(); });
