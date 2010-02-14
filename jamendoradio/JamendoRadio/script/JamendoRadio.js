@@ -51,8 +51,7 @@ function start() {
     var rxPlaylist = new RegExp("playlist\\/(\\d+)'");
     var rxMisc = new RegExp("\\?track_id=(\\d+)");
 	
-	var data; var set; var index;
-	
+	var data; var set;
     if (this.innerHTML.match(rxRadio)) {
 		set = 'radio';
 		data = rxRadio.exec(this.innerHTML)[1];
@@ -70,7 +69,7 @@ function start() {
 		data = rxMisc.exec(this.innerHTML)[1];
     } else return;
 	
-	chrome.extension.sendRequest({target:"loadFromMainPage",set:set,data:data,index:index}, function (response) { });
+	chrome.extension.sendRequest({target:"loadFromMainPage",set:set,data:data}, function (response) { });
     return false;
 }
 chrome.extension.sendRequest({target: "siteIntegration"}, function(response) { if(response.GoAhead) manipulatePage(); });

@@ -20,7 +20,7 @@ function setPlayerInfo(data, albumImageLoaded) {
 		$(".album").click(function() { chrome.tabs.create({ "url": data.AlbumUrl }); });
 		$(".artist").click(function() { chrome.tabs.create({ "url": data.ArtistUrl }); });
 		
-		animate(".title", 160); animate(".album", 185); animate(".artist", 185);
+		animate(".title"); animate(".album"); animate(".artist");
 		if($(".controls").css("display") == "none") $(".controls").fadeIn("slow");
 		else $(".play").toggleClass("pause", getState()._current.Playing());
 	} else {
@@ -44,13 +44,13 @@ function AppendStation(name, config) {
 function getState() {
 		return chrome.extension.getBackgroundPage();
 }
-function animate(elementName, widthLimit) {
-if($(elementName).width() > widthLimit) {
-	var distance = $(elementName).width() - widthLimit;
+function animate(elementName) {
+	if($(elementName).outerWidth() > $(elementName).parent().innerWidth()) {
+		var distance = $(elementName).outerWidth() - $(elementName).parent().innerWidth();
 		$(elementName)
 			.animate( { opacity: 1.0 }, 1500)
 			.animate( { marginLeft : distance * -1 }, 2000, "swing")
 			.animate( { opacity: 1.0 }, 700)
-			.animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName, widthLimit); });
+			.animate( { marginLeft : 0 }, 2000, "swing", function() { animate(elementName); });
 	}
 }

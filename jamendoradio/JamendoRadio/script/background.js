@@ -76,7 +76,7 @@ function Current() {
 	this.Dirty = false;
 	
 	var _onChange = false;
-	this.onChange = function(callback) { _onChange = callback; if(!this.Ready()) this.Unload(); else this.Update();}
+	this.onChange = function(callback) { _onChange = callback; if(_current.AlbumImageUrl != 'loading' && !this.Ready()) this.Unload(); else this.Update();}
 	
 	var cachedAlbumUrls = ['../styles/splash.jpg'];
 	this.Update = function() {
@@ -153,7 +153,7 @@ function PlaylistDataRecieved(playlist) {
 }
 
 function UpdatePosition(newIndex) {
-	_currentIndex = newIndex; audio.pause();
+	_currentIndex = newIndex;
 	scrobblers.submit(); scrobblers.clear();
 	
 	var data;
@@ -174,22 +174,30 @@ function UpdatePosition(newIndex) {
 function LoadStation(config) {
 	_current.Fetching();
 	_prefetching = false;
+	_repeat = false;
+	_playlist = false;
+	audio.pause();
 	
 	config += "&n=5";
 	if(config.indexOf("order=random") == -1)
 		config += "&nshuffle=500";
-	_repeat = false;
 		
 	jamendo.loadPlaylist(config);
 }
 function LoadFromMainpage(info) {
 	if(!info.set) return;
+	_current.Fetching();
+	_prefetching = false;
+	_repeat = false;
+	_playlist = false;
+	audio.pause();
+	
 	switch(info.set) {
-		case 'radio': jamendo.loadRadio(info.data); _repeat = false; break;
-		case 'playlist': jamendo.loadJamPlaylist(info.data); _repeat = false; break;
-		case 'artist': jamendo.loadArtist(info.data); _repeat = false; break;
-		case 'album': jamendo.loadAlbums(info.data); _repeat = false; break;
-		case 'track': overrideStartIndex = info.index; jamendo.loadTracks(info.data); _repeat = info.index; break;
+		case 'radio': jamendo.loadJamRadio(info.data); break;
+		case 'playlist': jamendo.loadJamPlaylist(info.data); break;
+		case 'artist': jamendo.loadArtist(info.data); break;
+		case 'album': jamendo.loadAlbums(info.data); break;
+		case 'track': jamendo.loadTracks(info.data); break;
 	}
 }
 
