@@ -1,6 +1,6 @@
 ﻿{
   "name"			: "Jamendo Radio",
-  "version"			: "1.8.0",
+  "version"			: "2.0.0",
   "description"		: "A radio playing music from www.jamendo.com.",
   "background_page"	: "background.html",
   "options_page"	: "options.html",
