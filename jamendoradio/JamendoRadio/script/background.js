@@ -75,23 +75,26 @@ function Current() {
 	
 	var _onChange = false;
 	this.onChange = function(callback) { _onChange = callback; if(_current.AlbumImageUrl != 'loading' && !this.Ready()) this.Unload(); else this.Update();}
+	function _sendUpdate(albumImageReady) {
+		try { _onChange(_current, albumImageReady) } catch(err) { }
+	}
 	
 	var cachedAlbumUrls = ['../styles/splash.jpg'];
 	this.Update = function() {
 		if(!_onChange) return;
 		
-		try {
 		if(this.AlbumImageUrl == 'loading') {
-			_onChange(_current, false);
+			_sendUpdate(false);
 		} else if(cachedAlbumUrls.contains(this.AlbumImageUrl)) {
-			_onChange(_current, true);
+			_sendUpdate(true);
 		} else {
 			var albumImage = document.createElement("img"); var source = this.AlbumImageUrl;
 			albumImage.onload = function () { cachedAlbumUrls[cachedAlbumUrls.length] = this.src; _current.Update();  }
 			albumImage.src = this.AlbumImageUrl;
-			_onChange(_current, false);
-		}} catch(err) {}
+			_sendUpdate(false);
+		}
 	}
+
 	
 	this.SetInfo = function(track, trackId, album, albumImageUrl, albumUrl, artist, artistUrl) {
 		this.Track = track;
