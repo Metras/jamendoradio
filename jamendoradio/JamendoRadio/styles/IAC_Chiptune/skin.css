@@ -8,9 +8,9 @@
 .info { top:48;left:140; width:210px; }
 .info a { font-family: verdana; }
 
-.title { font-size: 16pt; color:#a031aa; margin-bottom:4px; }
-.album { font-size: 10pt; color:#444343; }
-.artist{ font-weight: bold; font-size: 10pt; color:#444343; }
+.title { font-size: 16pt; color:#000; margin-bottom:4px; padding-right:54px; }
+.album { font-size: 10pt; color:#444343; padding-right:35px; }
+.artist{ font-weight: bold; font-size: 10pt; color:#444343; padding-right:35px; }
 
 .play { top:0; left:300; background: url(play.png); width:80px;height:80px; }
 .play:hover  { background:url(play-hover.png); }
