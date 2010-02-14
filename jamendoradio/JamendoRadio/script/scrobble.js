@@ -5,7 +5,8 @@ function Scrobbler(endpoint, clientId, clientVersion) {
     this.Handshake = function(user, passwordHash) {
 		if(!allowed(true)) return;
 		if(!user || !passwordHash) return;
-				
+		console.log('Sending handshake...');
+
         var ts = timeStamp();
         var auth_token = hex_md5(passwordHash + ts);
         var post_string = sformat("?hs=true&p=1.2.1&c={0}&v={1}&t={2}&u={3}&a={4}", 

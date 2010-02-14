@@ -51,8 +51,7 @@ function init() {
 		'audioscrobbler':new Scrobbler("http://post.audioscrobbler.com/", "jmn", "1.0"), //Scrobble to last.fm
 		'jamendo':new Scrobbler("http://postaudioscrobbler.jamendo.com/", "tst", "1.0"), //Scrobble to Jamendo
 		'ready':function() { return this.audioscrobbler.IsReady() || this.jamendo.IsReady() },
-		'init':function() { if(storage.Scrobble && storage.ScrobbleUsername && storage.ScrobblePassword) 
-			scrobblers.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobblePassword); },
+		'init':function() { this.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobblePassword) },
 		'nowPlaying':function() { if(!this.ready()) this.init(); this.aso = getScrobbleObject(_current); this.audioscrobbler.NowPlaying(this.aso); },
 		'submit':function() { if(!this.aso) return; if(this.audioscrobbler.Submit(this.aso)) this.clear(); },
 		'clear':function() { this.aso = false; }
