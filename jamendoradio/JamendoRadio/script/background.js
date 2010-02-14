@@ -13,11 +13,10 @@ var _currentIndex; var _repeat;
 var _playlist; 
 var _prefetching; var _prefetchlist;
 
-//Storage
+//Storage and state
 var storage = false;
 var _current = false;
 function getCurrent(dataUpdatedCallback) {
-	if(!Initialized) { init(); }
 	_current.onChange(dataUpdatedCallback);
 	return _current;
 }
