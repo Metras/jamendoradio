@@ -32,8 +32,16 @@
 		function save_options() {
 			storage.setSiteIntegration(document.getElementById("pageIntegration").checked);
             storage.setSkipDefault(document.getElementById("skipDefault").checked);
+		}
+		
+        function restore_options() {
+			document.getElementById("pageIntegration").checked = storage.SiteIntegration;
+			document.getElementById("skipDefault").checked = storage.SkipDefault;
+        }
+		
+		function save_scrobble() {
 			storage.setScrobble(document.getElementById("scrobble").checked);
-			
+
 			var usr = document.getElementById("scrUsername").value;
 			var pwd = document.getElementById("scrPassword").value;
 			
@@ -44,17 +52,14 @@
 				document.getElementById("scrPassword").value = ""; pwd = "";
 			}
 			
-			chrome.extension.sendRequest({target: "scrobbleInit"},function(response){});
+			chrome.extension.sendRequest({target: "scrobbleInit"},function(response){});		
 		}
 		
-        function restore_options() {
-			document.getElementById("pageIntegration").checked = storage.SiteIntegration;
-			document.getElementById("skipDefault").checked = storage.SkipDefault;
+		function restore_scrobble() {
 			document.getElementById("scrobble").checked = storage.Scrobble;
-			
 			document.getElementById("scrUsername").value = storage.ScrobbleUsername || "";
 			/* No point in restoring the password. It's been eaten up by the MD5 algorithm */
-        }
+		}
 
 		function sformat(inString, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) {
 			return inString.replace(/{(\d)}/g, function(m) { 
@@ -304,7 +309,7 @@
 		}
     </style>
 </head>
-<body onload="restore_options(); restore_channels();">
+<body onload="restore_options(); restore_channels(); restore_scrobble();">
     <div id="accordion" class="ui-helper-hidden">
         <h3 index="0">
             <a href="#">Jamendo Radio</a></h3>
@@ -328,18 +333,6 @@
                     <legend>
                         <input type="checkbox" id="skipDefault" style="width: 25px;" />Skip default channel.</legend>
                     Prevent the popup window from adding the Default channel.</fieldset>
-				<br />
-				<fieldset class="ui-corner-all">
-					<legend>
-						<input type="checkbox" id="scrobble" style="width: 25px;" />Scrobble to AudioScrobbler (last.fm)</legend>
-							<div id="scrobblestatus" style="float:right;"></div>
-							Send information of what music this extension is playing to AudioScrobbler.
-							You need an account at <a href="www.last.fm">Last.fm</a> for this to work.<br /><br />
-							<span style="margin:0 5px 0 25px;">Username</span><input id="scrUsername" /><br />
-							<span style="margin:0 8px 0 25px;">Password</span><input id="scrPassword" type="password" /><br />
-							<i>Note: Changes to credentials will only occur when both username and password is entered.
-								To turn scrobbling on or off, please use the checkbox.</i>
-							
         </div>
         <h3 index="1">
             <a href="#" id="channelButton">Channels</a></h3>
@@ -412,7 +405,30 @@
                 </table>
             </p>
         </div>
-    </div>
+		<h3 index="3">
+			<a href="#">Scrobbling</a></h3>
+		<div>
+            <div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix">
+                <div class="fg-buttonset fg-buttonset ui-helper-clearfix">
+                    <button class="fg-button ui-state-default fg-button-icon-left ui-corner-all" onclick="restore_scrobble();">
+                        <span class="ui-icon ui-icon-refresh"></span>Restore</button>
+                    <button class="fg-button ui-state-default fg-button-icon-left ui-corner-all" onclick="save_scrobble();">
+                        <span class="ui-icon ui-icon-disk"></span>Save</button>
+                </div>
+            </div><br />
+				<fieldset class="ui-corner-all">
+					<legend>
+						<input type="checkbox" id="scrobble" style="width: 25px;" />Scrobble to AudioScrobbler (last.fm)</legend>
+							<div id="scrobblestatus" style="float:right;"></div>
+							Send information of what music this extension is playing to AudioScrobbler.
+							You need an account at <a href="www.last.fm">Last.fm</a> for this to work.<br /><br />
+							<span style="margin:0 5px 0 25px;">Username</span><input id="scrUsername" /><br />
+							<span style="margin:0 8px 0 25px;">Password</span><input id="scrPassword" type="password" /><br />
+							<i>Note: Changes to credentials will only occur when both username and password is entered.
+								To turn scrobbling on or off, please use the checkbox.</i>
+				</fieldset>				
+		</div>
+	</div>
     <div id="presetContext" class="ui-helper-hidden ui-widget-header ui-corner-all contextMenu">
         <ul style="width: 300px;">
             <li class="fg-button ui-state-default ui-corner-all" onclick="$('#jamradioContext').css('left', event.pageX -5).css('top', event.pageY -5).show(500)">
