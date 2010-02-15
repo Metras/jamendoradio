@@ -27,7 +27,7 @@ function Scrobbler(endpoint, clientId, clientVersion) {
 	}
 
     this.NowPlaying = function(cd) {
-		if(!allowed()) return;
+		if(!allowed() || !cd) return;
 
 		var post_string = sformat("?s={0}&a={1}&b={2}&t={3}&l={4}&n={5}&m={6}",
 			_session.sessionId, cd.a, cd.b, cd.t, cd.l, cd.n, cd.m);
