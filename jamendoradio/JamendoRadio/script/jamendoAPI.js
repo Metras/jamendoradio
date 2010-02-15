@@ -1,4 +1,4 @@
-//Jamendo API wrapper
+﻿//Jamendo API wrapper
 function Jamendo(fields, settings, endpoint) {
 	var _endpoint = endpoint || 'http://api.jamendo.com/get2/';
 	this.getEndpoint = function() { return _endpoint; }

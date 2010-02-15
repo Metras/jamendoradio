@@ -1,4 +1,4 @@
-var storage = false;
+﻿var storage = false;
 
 function loadSkin() {
 	if(!storage.Skin) { storage.setSkin('default'); }

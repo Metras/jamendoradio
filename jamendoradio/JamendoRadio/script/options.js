@@ -1,4 +1,4 @@
-var idCounter = 0;
+﻿var idCounter = 0;
 		var storage = new Storage();
 		setInterval(function() {
 			chrome.extension.sendRequest({target: "scrobbleReady"}, function(response) { 

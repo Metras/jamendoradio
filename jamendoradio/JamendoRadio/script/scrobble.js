@@ -1,4 +1,4 @@
-function Scrobbler(endpoint, clientId, clientVersion) {
+﻿function Scrobbler(endpoint, clientId, clientVersion) {
     var _endpoint = endpoint; var _clientId = clientId; var _clientVersion = clientVersion;
 
     var _session;

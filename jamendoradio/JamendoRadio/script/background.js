@@ -1,4 +1,4 @@
-//Streamer
+﻿//Streamer
 var audio = new Audio();
 var Volume = 1;
 

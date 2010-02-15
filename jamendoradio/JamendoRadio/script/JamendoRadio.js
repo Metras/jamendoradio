@@ -1,4 +1,4 @@
-var jmdControl;
+﻿var jmdControl;
 
 function manipulatePage() {
 	overrideLinks("txtorange");
