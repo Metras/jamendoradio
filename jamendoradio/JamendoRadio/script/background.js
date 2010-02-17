@@ -9,8 +9,8 @@ var scrobblers = false;
 var jamendo = false; 
 
 //Playlist
-var _currentIndex; var _repeat;
 var _playlist; 
+var _currentIndex; var _repeat;
 var _prefetching; var _prefetchlist;
 
 //Storage and state
@@ -55,13 +55,13 @@ function init() {
 		'submit':function() { if(!this.aso) return; if(this.audioscrobbler.Submit(this.aso)) this.clear(); },
 		'clear':function() { this.aso = false; }
 	}
-	jamendo = new Jamendo();
-	jamendo.onPlaylistLoaded(PlaylistDataRecieved);
 	storage = new Storage();
 	_current = new Current();
 	
-	scrobblers.init();
+	jamendo = new Jamendo();
+	jamendo.onPlaylistLoaded(PlaylistDataRecieved);
 	
+	scrobblers.init();
 	Initialized = true;
 }
 
@@ -226,6 +226,7 @@ function PPlay() {
 function Next(forcePlay) {
 	console.log('Next');
 	if(_currentIndex + 1 >= _playlist.length && _playlist.length > 1) { _prefetching = true; jamendo.loadPlaylist(); }
+	_repeat = _repeat && _playlist.length > 1;
 	
 	if(forcePlay || _current.Playing()) {
 		UpdatePosition(_currentIndex + 1);
