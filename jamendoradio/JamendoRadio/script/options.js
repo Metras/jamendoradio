@@ -1,97 +1,60 @@
 ﻿var idCounter = 0;
 var storage =  new Storage();
 setInterval(function () {
-    chrome.extension.sendRequest( {
-        target : "scrobbleReady";
-    }
-    , function (response) {
+    chrome.extension.sendRequest( { target : "scrobbleReady" }, function (response) {
         if (response)$("#scrobblestatus").css('color', 'green').text('Connection detected');
         else $("#scrobblestatus").css('color', 'red').text('No connection');
-    }
-    );
+    });
 }
 , 250);
 function save_channels() {
     var options =  new Array();
     $(".channelRow").each(function () {
-        options[options.length] = {
-            "Name" : this.children[1].children[0].value, "Subset" : this.children[3].children[0].value;
-        };
-    }
-    );
-    storage.setStations(options);
+        options[options.length] = { "Name" : this.children[1].children[0].value, "Subset" : this.children[3].children[0].value };
+    });
+    storage.Stations = options;
 }
 function restore_channels() {
     $(".channel").remove();
-    var stations = storage.Stations;
-    for (i = 0; i < stations.length; i++) {
-        AddChannel(stations[i].Name, stations[i].Subset);
-    }
+	if(storage.Stations) {
+		for (i = 0; i < storage.Stations.length; i++) {
+			AddChannel(storage.Stations[i].Name, storage.Stations[i].Subset);
+		}
+	}
 }
 function save_options() {
-    storage.setSiteIntegration(document.getElementById("pageIntegration").checked);
-    storage.setSkipDefault(document.getElementById("skipDefault").checked);
-    storage.setSkin(document.getElementById("skin").value);
+	storage.SiteIntegration =  $("#pageIntegration").attr("checked");
+	storage.SkipDefault =  $("#skipDefault").attr("checked");
+	storage.Skin = $("#skin").attr("value");
 }
 function restore_options() {
-    document.getElementById("pageIntegration").checked = storage.SiteIntegration;
-    document.getElementById("skipDefault").checked = storage.SkipDefault;
-    document.getElementById("skin").value = storage.Skin || 'default';
+	$("#pageIntegration").attr("checked", storage.SiteIntegration);
+	$("#skipDefault").attr("checked", storage.SkipDefault);
+	$("#skin").attr("value", storage.Skin || "default");
     preview_skin();
 }
 function save_scrobble() {
-    storage.setScrobble(document.getElementById("scrobble").checked);
-    var usr = document.getElementById("scrUsername").value;
-    var pwd = document.getElementById("scrPassword").value;
+	storage.Scrobble = $("#scrobble").attr("checked");
+	
+    var usr =  $("#scrUsername").attr("value");
+    var pwd = $("#scrPassword").attr("value");
     if (usr && pwd) {
         storage.setScrobbleUsername(usr);
         storage.setScrobblePassword(hex_md5(pwd));
-        document.getElementById("scrPassword").value = "";
+        $("#scrPassword").attr("value", "");
         pwd = "";
     }
-    chrome.extension.sendRequest( {
-        target : "scrobbleInit";
-    }
-    , function (response) {
-    }
-    );
+    chrome.extension.sendRequest( { target : "scrobbleInit" }, function (response) {});
 }
 function restore_scrobble() {
-    document.getElementById("scrobble").checked = storage.Scrobble;
-    document.getElementById("scrUsername").value = storage.ScrobbleUsername || "";
+    $("#scrobble").attr("checked", storage.Scrobble);
+	 $("#scrUsername").attr("value",  storage.ScrobbleUsername || "");
     /* No point in restoring the password. It's been eaten up by the MD5 algorithm */
 }
 function preview_skin() {
-    document.getElementById('skinPreview').src = sformat('styles/{0}.png', document.getElementById("skin").value);
+	$("#skinPreview").attr("src", sformat('styles/{0}.png', $("#skin").attr("value")));
 }
-function sformat(inString, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) {
-    return inString.replace(/ {(\d)}/g, function (m) {
-        switch (m) {
-            case "{0}":
-                return v1;
-            case "{1}":
-                return v2;
-            case "{2}":
-                return v3;
-            case "{3}":
-                return v4;
-            case "{4}":
-                return v5;
-            case "{5}":
-                return v6;
-            case "{6}":
-                return v7;
-            case "{7}":
-                return v8;
-            case "{8}":
-                return v9;
-            case "{9}":
-                return v10;
-        }
-        return "";
-    }
-    );
-}
+
 function AddChannel(name, config) {
     var ident = "channel_" + idCounter++;
     var newHTML = "<li id='{0}' class='ui-state-default channel'>" + "<table><tr class='channelRow'><td class='move'><span class='ui-icon ui-icon-arrowthick-2-n-s'></span></td>" + "<td class='nameContainer'><input class='channelName' value='{1}' /></td>" + "<td class='edit'><span class='ui-icon ui-icon-pencil' onclick=\"$('#editor_{0}').removeAttr('disabled');\"></span></td>" + "<td class='configContainer'><input id='editor_{0}' class='channelConfig' value='{2}' disabled='true' /></td>" + "<td class='trash'><span class='ui-icon ui-icon-trash' onclick='$(\"#{0}\").remove();'></span></td></tr></table></li>";
@@ -193,14 +156,7 @@ $(function () {
 var cIndex = 0;
 $(window).resize(function () {
     $("#accordion").fadeOut(500, function () {
-        $("#accordion").accordion('destroy').fadeIn(500).accordion( {
-            fillSpace : true, changestart : function (event, ui) {
-                cIndex = parseInt(ui.newHeader.attr("index"));
-            }
-            , active : cIndex;
-        }
-        );
-    }
-    );
+        $("#accordion").accordion('destroy').fadeIn(500).accordion( { fillSpace : true, changestart : function (event, ui) { cIndex = parseInt(ui.newHeader.attr("index")) }, active : cIndex });
+    });
 }
 );

@@ -39,6 +39,7 @@ function init() {
 				case "overrideStartIndex": overrideStartIndex = request.startIndex; break;
 				case "scrobbleReady": sendResponse(scrobblers.ready()); return;
 				case "scrobbleInit": scrobblers.init(); break;
+				case "storage": sendResponse({storage:new Storage(localStorage)}); return;
             }
             sendResponse();
         }

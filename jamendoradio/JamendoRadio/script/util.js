@@ -16,38 +16,17 @@ function makeRequest(method, url, success_callback, error_callback) {
 	}
     req.send(null);
 }
-function Storage() {
-	this.getSiteIntegration = function() { return eval(localStorage["SiteIntegration"]); }
-	this.setSiteIntegration = function(value) { localStorage["SiteIntegration"] = JSON.stringify(value); this.SiteIntegration = this.getSiteIntegration(); }
-	this.SiteIntegration = this.getSiteIntegration();
+function Storage(customHost){
+	var __hst = customHost || localStorage;
+	var __fields = ['SiteIntegration','SkipDefault','Scrobble','ScrobbleUsername','ScrobblePassword','Stations','Skin'];
 	
-	this.getSkipDefault = function() { return eval(localStorage["SkipDefault"]); }
-	this.setSkipDefault = function(value) { localStorage["SkipDefault"] = JSON.stringify(value); this.SkipDefault = this.getSkipDefault(); }
-	this.SkipDefault = this.getSkipDefault();
-
-	this.getScrobble = function() { return eval(localStorage["Scrobble"]); }
-	this.setScrobble = function(value) { localStorage["Scrobble"] = JSON.stringify(value); this.Scrobble = this.getScrobble(); }
-	this.Scrobble = this.getScrobble();
-	
-	this.getScrobbleUsername = function() { return eval(localStorage["ScrobbleUsername"]); }
-	this.setScrobbleUsername = function(value) { localStorage["ScrobbleUsername"] = JSON.stringify(value); this.ScrobbleUsername = this.getScrobbleUsername(); }
-	this.ScrobbleUsername = this.getScrobbleUsername();
-	
-	this.getScrobblePassword = function() { return eval(localStorage["ScrobblePassword"]); }
-	this.setScrobblePassword = function(value) { localStorage["ScrobblePassword"] = JSON.stringify(value); this.ScrobblePassword = this.getScrobblePassword(); }
-	this.ScrobblePassword = this.getScrobblePassword();
-	
-	this.getStations = function() { return eval(localStorage["Stations"]); }
-	this.setStations = function(value) { localStorage["Stations"] = JSON.stringify(value); this.Stations = this.getStations(); }
-	this.Stations = this.getStations();
-	
-	this.getSkin = function() { return eval(localStorage["Skin"]); }
-	this.setSkin = function(value) { localStorage["Skin"] = JSON.stringify(value); this.Skin = this.getSkin(); }
-	this.Skin = this.getSkin();
-}
-Array.prototype.contains = function(v) { for(i = 0; i < this.length; i++) if(this[i] == v) return true; return false; }
+	var __ext = "";
+	__fields.foreach(function(field){__ext += sformat("this.__defineGetter__('{0}', function(){return eval(__hst['{0}']);});this.__defineSetter__('{0}', function(v){__hst['{0}'] = JSON.stringify(v);});", field);});
+	eval(__ext);
+}	
 Array.prototype.foreach = function(c) { for(i = 0; i < this.length; i++) c(this[i]); }
-	
+Array.prototype.contains = function(v) { for(i = 0; i < this.length; i++) if(this[i] == v) return true; return false; }
+
 	
 /*
  * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message

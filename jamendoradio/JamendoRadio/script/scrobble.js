@@ -13,9 +13,7 @@
         var setup = function (response) {
             var data = response.split('\n');
             if (data[0] == "OK") {
-                _session = {
-                    'usr' : user, 'pwd' : passwordHash, 'sessionId' : data[1], 'npUrl' : data[2], 'subUrl' : data[3];
-                };
+                _session = { 'usr' : user, 'pwd' : passwordHash, 'sessionId' : data[1], 'npUrl' : data[2], 'subUrl' : data[3]};
                 console.log("Handshake completed, " + user + " is now logged in to endpoint " + _endpoint + ".");
             }
             else {
@@ -90,14 +88,10 @@ function getScrobbleObject(data, variant) {
         }
         else fixedTrack = data.Track;
         if (!fixedArtist || !fixedAlbum || !fixedTrack)return;
-        scrobbleObject = {
-            'a' : urlencode(fixedArtist), 'b' : urlencode(fixedAlbum), 't' : urlencode(fixedTrack), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime() / 1000);
-        }
+        scrobbleObject = {'a' : urlencode(fixedArtist), 'b' : urlencode(fixedAlbum), 't' : urlencode(fixedTrack), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime() / 1000) };
     }
     else {
-        scrobbleObject = {
-            'a' : urlencode(data.Artist), 'b' : urlencode(data.Album), 't' : urlencode(data.Track), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime()/1000);
-        };
+        scrobbleObject = { 'a' : urlencode(data.Artist), 'b' : urlencode(data.Album), 't' : urlencode(data.Track), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime()/1000)};
     }
     if (variant)switch (variant) {
         case 'jamendo':

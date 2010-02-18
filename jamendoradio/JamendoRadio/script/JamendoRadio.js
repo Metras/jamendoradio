@@ -1,5 +1,4 @@
-﻿var jmdControl;
-function manipulatePage() {
+﻿function manipulatePage() {
     overrideLinks("txtorange");
     overrideLinks("trackstable_play");
     overrideLinks("album_simple_play");
@@ -20,23 +19,22 @@ function overrideLinks(cssClass, containerId) {
         else return;
     }
     for (i = 0; i < playButtons.length; i++) {
-        playButtons[i].onclick = start;
-        var subLinks = playButtons[i].getElementsByTagName("a");
-        for (j = 0; j < subLinks.length; j++) {
-            if (subLinks[j].onclick)subLinks[j].onclick = "";
-        }
+        if(playButtons[i]) {
+			playButtons[i].onclick = start;
+			var subLinks = playButtons[i].getElementsByTagName("a");
+			for (j = 0; j < subLinks.length; j++) {
+				if (subLinks[j].onclick)subLinks[j].onclick = "";
+			}
+		}
     }
 }
 function createArtistRadio(cssClass) {
     var playButton = document.body.getElementsByClassName(cssClass)[0];
-    playButton.onclick = function () {
-        chrome.extension.sendRequest( {
-            target : "loadFromMainPage", set : 'artist', data : /artist\/([\w\.%]+)/.exec(location.href)[1];
-        }
-        , function (response) {
-        }
-        );
-        return false;
+	if(playButton) {
+		playButton.onclick = function () {
+			chrome.extension.sendRequest( { target : "loadFromMainPage", set : 'artist', data : /artist\/([\w\.%]+)/.exec(location.href)[1] }, function (response) { } );
+			return false;
+		}
     }
 }
 function start() {
@@ -68,18 +66,8 @@ function start() {
         data = rxMisc.exec(this.innerHTML)[1];
     }
     else return;
-    chrome.extension.sendRequest( {
-        target : "loadFromMainPage", set : set, data : data;
-    }
-    , function (response) {
-    }
-    );
+    chrome.extension.sendRequest( { target : "loadFromMainPage", set : set, data : data }, function (response) { });
     return false;
 }
-chrome.extension.sendRequest( {
-    target : "siteIntegration";
-}
-, function (response) {
-    if (response.GoAhead)manipulatePage();
-}
-);
+var test;
+chrome.extension.sendRequest( { target : "storage" }, function (response) { if (response.storage)test=response.storage;if(test && test.SiteIntegration)manipulatePage(); });
