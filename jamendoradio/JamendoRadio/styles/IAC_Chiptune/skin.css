@@ -26,6 +26,6 @@
 .stop { top:115; left:337; background: url(stop.png); width:27px;height:27px; }
 .stop:active { background:url(stop-active.png); }
 
-.ui-slider { height:17px; width:145px; top:147px; left:190px;}
+.ui-slider { height:17px; width:105px; top:147px; left:210px;}
 .ui-slider-handle { background:url(volume.png); width:17px;height:17px; }
 .ui-slider-handle:active { background:url(volume-active.png); }
