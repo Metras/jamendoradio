@@ -53,7 +53,7 @@ function init() {
 		'ready':function() { return this.audioscrobbler.IsReady() || this.jamendo.IsReady() },
 		'init':function() { this.audioscrobbler.Handshake(storage.ScrobbleUsername, storage.ScrobblePassword) },
 		'nowPlaying':function() { if(!this.ready()) this.init(); this.aso = getScrobbleObject(_current); this.audioscrobbler.NowPlaying(this.aso); },
-		'submit':function() { if(!this.aso) return; if(this.audioscrobbler.Submit(this.aso)) this.clear(); },
+		'submit':function() { if(!this.aso) return; if(this.audioscrobbler.Submit(this.aso, audio.currentTime)) this.clear(); },
 		'clear':function() { this.aso = false; }
 	}
 	storage = new Storage();
