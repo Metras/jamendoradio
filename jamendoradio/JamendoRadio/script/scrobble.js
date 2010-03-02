@@ -58,7 +58,7 @@
 		_retryCounter = 0;
 	}
 	function fail() {
-		retry(_retryCounter++);
+		retry(_retryCounter++, eval(localStorage["ScrobbleUsername"]), eval(localStorage["ScrobblePassword"]));
 		_session = false;
 	}
 }
