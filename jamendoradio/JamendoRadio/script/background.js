@@ -63,6 +63,8 @@ function init() {
 	jamendo.onPlaylistLoaded(PlaylistDataRecieved);
 	
 	scrobblers.init();
+	Volume = storage.Volume;
+	if(!Volume) Volume = 1;
 	Initialized = true;
 }
 
@@ -206,6 +208,7 @@ function LoadFromMainpage(info) {
 function SetVolume(vol) {
 	Volume = vol;
 	audio.volume = vol;
+	storage.Volume = vol;
 }
 function Play() {
 	console.log('Play');

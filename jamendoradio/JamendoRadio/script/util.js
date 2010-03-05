@@ -18,7 +18,7 @@ function makeRequest(method, url, success_callback, error_callback) {
 }
 function Storage(customHost){
 	var __hst = customHost || localStorage;
-	var __fields = ['SiteIntegration','SkipDefault','Scrobble','ScrobbleUsername','ScrobblePassword','Stations','Skin'];
+	var __fields = ['SiteIntegration','SkipDefault','Scrobble','ScrobbleUsername','ScrobblePassword','Stations','Skin','Volume'];
 	
 	var __ext = "";
 	__fields.foreach(function(field){__ext += sformat("this.__defineGetter__('{0}', function(){return eval(__hst['{0}']);});this.__defineSetter__('{0}', function(v){__hst['{0}'] = JSON.stringify(v);});", field);});
