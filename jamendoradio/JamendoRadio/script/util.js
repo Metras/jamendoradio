@@ -1,21 +1,7 @@
 ﻿function urlencode(str) { return escape(str).replace('+', '%2B').replace('%20', '+').replace('*', '%2A').replace('/', '%2F').replace('@', '%40'); }
 function sformat(inString, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) { return inString.replace(/{(\d)}/g, function(m) { switch (m) { case "{0}": return v1; case "{1}": return v2; case "{2}": return v3; case "{3}": return v4; case "{4}": return v5; case "{5}": return v6; case "{6}": return v7; case "{7}": return v8; case "{8}": return v9; case "{9}": return v10; } return ""; }); }
 function timeStamp() { return Math.round(new Date().getTime() / 1000); }
-function makeRequest(method, url, success_callback, error_callback) {
-	if(!method || !url) return false;
-	var req = new XMLHttpRequest();
-    req.open(method, url, true);
-    req.onreadystatechange = function() {
-		if (req.readyState == 4) {
-			if (req.status == 200 && success_callback) {
-				success_callback(req.responseText);
-			} else if(error_callback) {
-				error_callback(req);
-			}
-		}
-	}
-    req.send(null);
-}
+
 function Storage(customHost){
 	var __hst = customHost || localStorage;
 	var __fields = ['SiteIntegration','SkipDefault','Scrobble','ScrobbleUsername','ScrobblePassword','Stations','Skin','Volume'];
@@ -358,3 +344,5 @@ jQuery.effects||(function(d){d.effects={version:"1.7.2",save:function(g,h){for(v
  *	effects.core.js
  */
 (function(a){a.effects.transfer=function(b){return this.queue(function(){var f=a(this),h=a(b.options.to),e=h.offset(),g={top:e.top,left:e.left,height:h.innerHeight(),width:h.innerWidth()},d=f.offset(),c=a('<div class="ui-effects-transfer"></div>').appendTo(document.body).addClass(b.options.className).css({top:d.top,left:d.left,height:f.innerHeight(),width:f.innerWidth(),position:"absolute"}).animate(g,b.duration,b.options.easing,function(){c.remove();(b.callback&&b.callback.apply(f[0],arguments));f.dequeue()})})}})(jQuery);;
+
+ 

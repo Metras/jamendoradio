@@ -38,11 +38,7 @@ function Jamendo(fields, settings, endpoint) {
             _timeKeeper = false;
         }
         , 1200);
-        makeRequest("GET", url, function (data) {
-            var _playlist = eval(data);
-            if (_onPlaylistLoaded)_onPlaylistLoaded(_playlist);
-        }
-        );
+		$.getJSON(url, _onPlaylistLoaded);
         _previousRequest = url;
     }
     this.loadArtist = function (artist) {

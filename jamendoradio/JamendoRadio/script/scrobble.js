@@ -10,21 +10,21 @@
         if(!fromRetry) retry_reset();
         var ts = timeStamp();
         var auth_token = hex_md5(passwordHash + ts);
-        var post_string = sformat("?hs=true&p=1.2.1&c={0}&v={1}&t={2}&u={3}&a={4}", _clientId, _clientVersion, ts, user, auth_token);
+    	var post_string = "?" + $.param({hs:true,p:'1.2.1',c:_clientId,v:_clientVersion,t:ts,u:user,a:auth_token});
         var setup = function (response) {
-            var data = response.split('\n');
+			var data = response.split('\n');
             if (data[0] == "OK") {
                 _session = { 'usr' : user, 'pwd' : passwordHash, 'sessionId' : data[1], 'npUrl' : data[2], 'subUrl' : data[3]};
             } else  fail(); 
         }
-        makeRequest("GET", _endpoint + post_string, setup, fail	);
+        //makeRequest("GET", _endpoint + post_string, setup, fail	);
+		$.get(_endpoint + post_string, setup);
     }
     this.NowPlaying = function (cd) {
         if (!allowed() || !cd)return;
-        var post_string = sformat("?s={0}&a={1}&b={2}&t={3}&l={4}&n={5}&m={6}", _session.sessionId, cd.a, cd.b, cd.t, cd.l, cd.n, cd.m);
-        makeRequest("POST", _session.npUrl + post_string, function (r) {
-			if(r.split('\n')[0] != "OK") fail();
-         }, fail);
+		cd.s = _session.sessionId;
+		var post_string = "?" + $.param(cd);
+        $.post(_session.npUrl + post_string, check);
     }
     this.Submit = function (cd, playTime) {
         if (!allowed())return;
@@ -32,11 +32,10 @@
         if (cd.l < 30) return;
         if ((playTime >= 240) || (playTime > cd.l / 2)) {
             //All-righty then
-            var post_string = sformat("?s={0}&o[0]=P&r[0]=&a[0]={1}&b[0]={2}&t[0]={3}&l[0]={4}&n[0]={5}&i[0]={6}&m[0]={7}", _session.sessionId, cd.a, cd.b, cd.t, cd.l, cd.n, cd.i, cd.m);
-            makeRequest("POST", _session.subUrl + post_string, function (r) {
-				if(r.split('\n')[0] != "OK") fail();
-           }, fail);
-            return true;
+			cd.s = _session.sessionId;
+			var post_string = "?" + $.param(cd);
+			$.post(_session.subUrl + post_string, check);			
+             return true;
         }
         //Guess not
         return false;
@@ -51,11 +50,16 @@
 	var _retryCounter = 0;
 	var _retryTimer = null;
 	function retry(tries, user, passwordHash) {
-		if(tries < 3) _retryTimer = setTimeout(function() {  this.Handshake(user, passwordHash, true) }, 1500);
+		var hs = this.Handshake;
+		if(tries < 3) _retryTimer = setTimeout(function() {  hs(user, passwordHash, true) }, 1500);
 	}
 	function retry_reset(){
 		if(_retryTimer) clearTimeout(_retryTimer);
 		_retryCounter = 0;
+	}
+	function check(r) {
+		if(r.split('\n')[0] != "OK") { fail(); return false; }
+		return true;
 	}
 	function fail() {
 		retry(_retryCounter++, eval(localStorage["ScrobbleUsername"]), eval(localStorage["ScrobblePassword"]));
@@ -83,10 +87,10 @@ function getScrobbleObject(data, variant) {
         }
         else fixedTrack = data.Track;
         if (!fixedArtist || !fixedAlbum || !fixedTrack)return;
-        scrobbleObject = {'a' : urlencode(fixedArtist), 'b' : urlencode(fixedAlbum), 't' : urlencode(fixedTrack), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime() / 1000) };
+        scrobbleObject = {'a' : fixedArtist, 'b' :fixedAlbum, 't' :fixedTrack, 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime() / 1000) };
     }
     else {
-        scrobbleObject = { 'a' : urlencode(data.Artist), 'b' : urlencode(data.Album), 't' : urlencode(data.Track), 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime()/1000)};
+        scrobbleObject = { 'a' : data.Artist, 'b' :data.Album, 't' :data.Track, 'l' : Math.round(audio.duration), 'n' : "", 'm' : "", 'i' : Math.round(new Date().getTime()/1000)};
     }
     if (variant)switch (variant) {
         case 'jamendo':
