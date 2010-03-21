@@ -84,6 +84,12 @@ function Current() {
 	
 	var cachedAlbumUrls = ['../styles/splash.jpg'];
 	this.Update = function() {
+		var title = this.Track;
+		if(this.TrackId) title += " - " + this.Artist;
+		if(storage.Scrobble) title += sformat(" (Scrobble: {0})", scrobblers.audioscrobbler.IsReady() ? "On" : "Off");
+		
+		chrome.browserAction.setTitle({"title":title})
+		
 		if(!_onChange) return;
 		
 		if(this.AlbumImageUrl == 'loading') {
