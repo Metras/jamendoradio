@@ -85,10 +85,10 @@ function Current() {
 	var cachedAlbumUrls = ['../styles/splash.jpg'];
 	this.Update = function() {
 		var title = this.Track;
-		if(this.TrackId) title += " - " + this.Artist;
+		if(this.TrackId) title += "\nby: " + this.Artist;
 		if(storage.Scrobble) title += sformat(" (Scrobble: {0})", scrobblers.audioscrobbler.IsReady() ? "On" : "Off");
 		
-		chrome.browserAction.setTitle({"title":title})
+		chrome.browserAction.setTitle({"title":title+'\nJamendo Radio'})
 		
 		if(!_onChange) return;
 		
