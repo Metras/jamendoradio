@@ -9,7 +9,7 @@
 			loadSkin();
 			loadStations();
 
-			$("#slider").slider({ min: 0, max: 100, step: 1, value: getState().Volume * 100, animate: true, change: function(event, ui) { getState().SetVolume(ui.value / 100) } });
+			$("#slider").slider({ min: 0, max: 100, step: 1, value: getState().Volume * 100, animate: false, slide: function(event, ui) { getState().SetVolume(ui.value / 100) } });
 			$(".play").click(function() { getState().PPlay(); $(".play").toggleClass("pause", getState()._current.Playing()); });
 			$(".stop").click(function() { getState().Stop(); });
 			$(".next").click(function() { getState().Next(); });
