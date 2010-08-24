@@ -27,11 +27,13 @@ function restore_channels() {
 function save_options() {
 	storage.SiteIntegration =  $("#pageIntegration").attr("checked");
 	storage.Skin = $("#skin").attr("value");
+	save_scrobble();
 }
 function restore_options() {
 	$("#pageIntegration").attr("checked", storage.SiteIntegration);
 	$("#skin").attr("value", storage.Skin || "default");
     preview_skin();
+	restore_scrobble();
 }
 function save_scrobble() {
 	storage.Scrobble = $("#scrobble").attr("checked");

@@ -11,6 +11,10 @@ select
 {
 	width:230px;
 }
+fieldset
+{
+	margin-top: 1em;
+}
 .channel
 {
 	white-space: nowrap;

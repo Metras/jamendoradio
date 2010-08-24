@@ -19,7 +19,7 @@
                     <button class="fg-button ui-state-default fg-button-icon-left ui-corner-all" onclick="save_options();">
                         <span class="ui-icon ui-icon-disk"></span>Save</button>
                 </div>
-            </div><br />
+            </div>
 				<fieldset class="ui-corner-all">
 					<legend>Skin</legend>
 					<select size="8" id="skin" onchange="preview_skin();">
@@ -27,35 +27,23 @@
 						<option value="IAC_Chiptune">IAC Chiptune</option>
 					</select>
 					<img id="skinPreview" />
-				</fieldset><br />
+				</fieldset>
                 <fieldset class="ui-corner-all">
                     <legend>
                         <input type="checkbox" id="pageIntegration" style="width: 25px;" />Integrate with
                         Jamendo.com</legend>Make play buttons on jamendo.com play music in Jamendo Radio (this extension).
                 </fieldset>
-        </div>
-		<h3 index="1">
-			<a href="#">Scrobbling</a></h3>
-		<div>
-            <div class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix">
-                <div class="fg-buttonset fg-buttonset ui-helper-clearfix">
-                    <button class="fg-button ui-state-default fg-button-icon-left ui-corner-all" onclick="restore_scrobble();">
-                        <span class="ui-icon ui-icon-refresh"></span>Restore</button>
-                    <button class="fg-button ui-state-default fg-button-icon-left ui-corner-all" onclick="save_scrobble();">
-                        <span class="ui-icon ui-icon-disk"></span>Save</button>
-                </div>
-            </div><br />
 				<fieldset class="ui-corner-all">
 					<legend>
-						<input type="checkbox" id="scrobble" style="width: 25px;" />Scrobble to AudioScrobbler from last.fm</legend>
+						<input type="checkbox" id="scrobble" style="width: 25px;" />Beta test: Scrobble to AudioScrobbler</legend>
 							<div id="scrobblestatus" style="float:right;"></div>
-							Send information of what music this extension is playing to your <a href="http://www.last.fm">Last.fm</a> AudioScrobbler account.<br /><br />
+							Send information of what music this extension is playing to your <a href="http://www.last.fm">Last.fm</a> AudioScrobbler account.<br />
 							<span style="margin:0 5px 0 25px;">Username</span><input id="scrUsername" /><br />
 							<span style="margin:0 8px 0 25px;">Password</span><input id="scrPassword" type="password" /><br />
 				</fieldset>				
 				<i>Note: Changes to credentials will only occur when both username and password is entered.
 					To turn scrobbling on or off, please use the checkbox.</i>
-		</div>
+        </div>
         <h3 index="2">
             <a href="#" id="channelButton">Channels</a></h3>
         <div>
@@ -92,7 +80,6 @@
                         <span class="ui-icon ui-icon-plus"></span>Add channel</button>
                 </div>
             </div>
-            <p>
                 <table style="color: white;">
                     <tr>
                         <td>
@@ -131,7 +118,6 @@
                         </td>
                     </tr>
                 </table>
-            </p>
         </div>
 	</div>
     <div id="presetContext" class="ui-helper-hidden ui-widget-header ui-corner-all contextMenu">
