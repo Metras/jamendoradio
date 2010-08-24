@@ -1,6 +1,6 @@
 ﻿{
   "name"			: "Jamendo Radio",
-  "version"			: "2.0.0.6",
+  "version"			: "2.0.0.7",
   "description"		: "A radio playing music from www.jamendo.com.",
   "update_url"		: "http://jamendoradio.googlecode.com/svn/trunk/jamendoradio/updates.xml",
   "background_page"	: "background.html",
