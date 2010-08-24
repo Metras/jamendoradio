@@ -8,6 +8,7 @@ setInterval(function () {
 }
 , 250);
 function save_channels() {
+	storage.SkipDefault =  $("#skipDefault").attr("checked");
     var options =  new Array();
     $(".channelRow").each(function () {
         options[options.length] = { "Name" : this.children[1].children[0].value, "Subset" : this.children[3].children[0].value };
@@ -15,6 +16,7 @@ function save_channels() {
     storage.Stations = options;
 }
 function restore_channels() {
+	$("#skipDefault").attr("checked", storage.SkipDefault);
     $(".channel").remove();
 	if(storage.Stations) {
 		for (i = 0; i < storage.Stations.length; i++) {
@@ -24,12 +26,10 @@ function restore_channels() {
 }
 function save_options() {
 	storage.SiteIntegration =  $("#pageIntegration").attr("checked");
-	storage.SkipDefault =  $("#skipDefault").attr("checked");
 	storage.Skin = $("#skin").attr("value");
 }
 function restore_options() {
 	$("#pageIntegration").attr("checked", storage.SiteIntegration);
-	$("#skipDefault").attr("checked", storage.SkipDefault);
 	$("#skin").attr("value", storage.Skin || "default");
     preview_skin();
 }
