@@ -209,6 +209,7 @@ function LoadFromMainpage(info) {
 		case 'artist': jamendo.loadArtist(info.data); break;
 		case 'album': jamendo.loadAlbums(info.data); break;
 		case 'track': jamendo.loadTracks(info.data); break;
+		case 'user': jamendo.loadUserStarred(info.data); break;
 	}
 }
 
