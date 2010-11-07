@@ -73,5 +73,4 @@ function start() {
 	chrome.extension.sendRequest( { target : "loadFromMainPage", set : set, data : data }, function (response) { });
 	return false;
 }
-var test;
 chrome.extension.sendRequest( { target : "storage" }, function (response) { if (response.storage)test=response.storage;if(test && test.SiteIntegration)manipulatePage(); });
