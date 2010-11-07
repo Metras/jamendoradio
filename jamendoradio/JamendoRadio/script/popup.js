@@ -32,17 +32,24 @@ function setPlayerInfo(data, albumImageLoaded) {
 }
 
 function loadStations() {
-    if (!storage.SkipDefault)AppendStation('Top 500', '/?order=ratingmonth_desc', 'Adefault');
+    if (!storage.SkipDefault)AppendStation('Top 500', '/?order=ratingmonth_desc');
 	if(storage.Stations) {
 		for (i = 0; i < storage.Stations.length; i++) {
-			AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset, 'Astation'+i);
+			AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset);
 		}
 	}
 }
 
-function AppendStation(name, config, id) {
-    var newHtml = "<a id='{2}' href='javascript:getState().LoadStation(\"{0}\");'>{1}</a>";
-    $(".stations").append(sformat(newHtml, config, name, id));
+function AppendStation(name, config) {
+    var newHtml = "<a class='{2}' onclick='markActiveLink(this)' href='javascript:getState().LoadStation(\"{0}\");'>{1}</a>";
+    $(".stations").append(sformat(newHtml, config, name, (config==getState()._current.config ? 'chosen' : '') ));
+}
+
+function markActiveLink(linkElement) {
+	var arr=document.getElementsByClassName('chosen');
+	for (var i=0; i<arr.length; i++) { arr[i].className = arr[i].className.replace(/\w*chosen\w*/, ''); }
+	
+	if (linkElement) linkElement.className += ' chosen';
 }
 
 function getState() {

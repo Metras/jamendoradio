@@ -89,7 +89,7 @@ function Current() {
 		if(this.TrackId) title += "\nby: " + this.Artist;
 		if(storage.Scrobble) title += sformat(" (Scrobble: {0})", scrobblers.audioscrobbler.IsReady() ? "On" : "Off");
 		
-		chrome.browserAction.setTitle({"title":title+'\nJamendo Radio'})
+		chrome.browserAction.setTitle({"title":title+'\nJamendo Radio'});
 		
 		if(!_onChange) return; //require album art handler
 		
@@ -197,6 +197,7 @@ function UpdatePosition(newIndex) {
 //Operation
 function LoadStation(config) {
 	_current.Fetching();
+	_current.config = config; //save original config to enable tracking which station is currently playing
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;

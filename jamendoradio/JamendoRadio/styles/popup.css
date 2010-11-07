@@ -11,5 +11,5 @@ a { cursor:hand; }
 
 .title { cursor:default!important; }
 
-.stations a { white-space:nowrap; display:inline-block; }
-.stationswrapper { margin-left:auto; margin-right:auto; }
+.stations a { white-space:nowrap; display:inline-block; text-decoration: none; }
+.stations a:hover, .stations a.chosen { text-decoration: underline; color:black; }
