@@ -41,8 +41,8 @@ function save_scrobble() {
     var usr =  $("#scrUsername").attr("value");
     var pwd = $("#scrPassword").attr("value");
     if (usr && pwd) {
-        storage.setScrobbleUsername(usr);
-        storage.setScrobblePassword(hex_md5(pwd));
+        storage.ScrobbleUsername = usr;
+        storage.ScrobblePassword = hex_md5(pwd);
         $("#scrPassword").attr("value", "");
         pwd = "";
     }
