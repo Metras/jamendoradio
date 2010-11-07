@@ -56,7 +56,7 @@ function Jamendo(fields, settings, endpoint) {
     this.loadTracks = function (ids) {
         var configString = '/?id=';
         if (!ids.substr)configString += concat(ids);
-        elseconfigString += ids;
+        else configString += ids;
         this.loadPlaylist(configString);
     }
     this.loadAlbums = function (ids, order) {
@@ -69,6 +69,7 @@ function Jamendo(fields, settings, endpoint) {
         else configString += ids;
         this.loadPlaylist(configString);
     }
+	
     this.loadJamRadio = function (ids, order) {
         var configString = '+radio_track_inradioplaylist/?order=';
         if (order)configString += order;

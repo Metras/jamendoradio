@@ -38,7 +38,28 @@ function createArtistRadio(cssClass) {
     }
 }
 function start() {
-    var rxRadio =  new RegExp("radio\\/(\\d+)'");
+	var set, data;
+	
+	if(this.innerHTML.match(/album_id=/)) {
+		if(this.innerHTML.match(/#(\d+)/))
+			chrome.extension.sendRequest( { target : "overrideStartIndex", startIndex: this.innerHTML.match(/#(\d+)/)[1] }, function (response) { });
+		data = this.innerHTML.match(/album_id=(\d+)/)[1];
+		set = 'album';
+	} else if(this.innerHTML.match(/playlist_id=/)) {
+		if(this.innerHTML.match(/#(\d+)/))
+			chrome.extension.sendRequest( { target : "overrideStartIndex", startIndex: this.innerHTML.match(/#(\d+)/)[1] }, function (response) { });
+		data = this.innerHTML.match(/playlist_id=(\d+)/)[1];
+		set = 'playlist';
+	} else if(this.innerHTML.match(/radio\\/)) {
+		data = this.innerHTML.match(/id=(\d+)/)[1];
+		set = 'radio';		
+	} else if(this.innerHTML.match(/id=/)) {
+		data = this.innerHTML.match(/id=(\d+)/)[1];
+		set = 'track';
+	}
+	chrome.extension.sendRequest( { target : "loadFromMainPage", set : set, data : data }, function (response) { });
+	return false;
+/*     var rxRadio =  new RegExp("radio\\/(\\d+)'");
     var rxTrack =  new RegExp("\\?id=(\\d+)");
     var rxAlbum =  new RegExp("album\\/(\\d+)'");
     var rxPlaylist =  new RegExp("playlist\\/(\\d+)'");
@@ -67,7 +88,7 @@ function start() {
     }
     else return;
     chrome.extension.sendRequest( { target : "loadFromMainPage", set : set, data : data }, function (response) { });
-    return false;
+    return false; */
 }
 var test;
 chrome.extension.sendRequest( { target : "storage" }, function (response) { if (response.storage)test=response.storage;if(test && test.SiteIntegration)manipulatePage(); });

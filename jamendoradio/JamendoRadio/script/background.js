@@ -200,6 +200,7 @@ function LoadFromMainpage(info) {
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;
+	
 	audio.pause();
 	
 	switch(info.set) {
