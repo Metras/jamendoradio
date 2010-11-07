@@ -32,17 +32,17 @@ function setPlayerInfo(data, albumImageLoaded) {
 }
 
 function loadStations() {
-    if (!storage.SkipDefault)AppendStation('Top 500', '/?order=ratingmonth_desc');
+    if (!storage.SkipDefault)AppendStation('Top 500', '/?order=ratingmonth_desc', 'Adefault');
 	if(storage.Stations) {
 		for (i = 0; i < storage.Stations.length; i++) {
-			AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset);
+			AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset, 'Astation'+i);
 		}
 	}
 }
 
-function AppendStation(name, config) {
-    var newHtml = "<a href='javascript:getState().LoadStation(\"{0}\");'>{1}</a>";
-    $(".stations").append(sformat(newHtml, config, name));
+function AppendStation(name, config, id) {
+    var newHtml = "<a id='{2}' href='javascript:getState().LoadStation(\"{0}\");'>{1}</a>";
+    $(".stations").append(sformat(newHtml, config, name, id));
 }
 
 function getState() {

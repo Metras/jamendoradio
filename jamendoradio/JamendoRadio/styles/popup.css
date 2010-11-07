@@ -4,7 +4,7 @@ a { cursor:hand; }
 .albumimage, .albumloading, .play , .next , .stop , .ui-slider , .ui-slider-handle , .info
 { position:absolute; }
 
-.albumloading { background:url(../ajax-loader.gif) no-repeat 20px 20px; }
+.albumloading { background:url(ajax-loader.gif) no-repeat 20px 20px; }
 
 .info { overflow:hidden; }
 .info a { float:left; clear:both; white-space:nowrap; }
