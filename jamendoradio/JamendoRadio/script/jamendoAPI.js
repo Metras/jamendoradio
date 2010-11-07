@@ -57,6 +57,8 @@ function Jamendo(fields, settings, endpoint) {
         var configString = '/?id=';
         if (!ids.substr)configString += concat(ids);
         else configString += ids;
+		if(ids.indexOf("+") > -1)
+			configString += '&n=' + ids.match(/\d+/g).length;
         this.loadPlaylist(configString);
     }
     this.loadAlbums = function (ids, order) {

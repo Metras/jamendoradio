@@ -64,7 +64,9 @@ function start() {
 		data = this.innerHTML.match(/id=(\d+)/)[1];
 		set = 'radio';		
 	} else if(this.innerHTML.match(/id=/)) {
-		data = this.innerHTML.match(/id=(\d+)/)[1];
+		if(this.innerHTML.match(/#(\d+)/))
+			chrome.extension.sendRequest( { target : "overrideStartIndex", startIndex: this.innerHTML.match(/#(\d+)/)[1] }, function (response) { });
+		data = this.innerHTML.match(/id=([\d+]+)/)[1];
 		set = 'track';
 	} else return;
 	

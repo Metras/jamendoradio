@@ -145,13 +145,25 @@ function Current() {
 	}
 }
 
-var overrideStartIndex = false;
+var overrideStartIndex = false; var doSort = false;
 function PlaylistDataRecieved(playlist) {
 	if(_prefetching) {
 		_prefetchlist = playlist;
 		_prefetching = false;
 	} else {
-		_playlist = playlist;
+		if(doSort) {
+			_playlist = [];
+			var m = doSort.match(/\d+/g);
+			for(var i in m) {
+				for(var j in playlist) {
+					if(playlist[j].id == m[i]) {
+						_playlist.push(playlist[j]);
+						break;
+					}
+				}
+			}
+			doSort = false;
+		} else _playlist = playlist;
 		if(overrideStartIndex) { 
 			UpdatePosition(overrideStartIndex);
 			overrideStartIndex = false;
@@ -163,7 +175,7 @@ function PlaylistDataRecieved(playlist) {
 }
 
 function UpdatePosition(newIndex) {
-	_currentIndex = newIndex;
+	_currentIndex = parseInt(newIndex);
 	scrobblers.submit(); scrobblers.clear();
 	
 	var data;
@@ -200,6 +212,10 @@ function LoadFromMainpage(info) {
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;
+	
+	if(info.data.indexOf("+") > -1)
+		doSort = info.data;
+	else doSort = false;
 	
 	audio.pause();
 	
