@@ -31,6 +31,11 @@ function init() {
 	audio.addEventListener("playing", function() {
 		if(_current.Dirty) scrobblers.nowPlaying(); _current.Dirty = false;
 	}, false);
+	audio.addEventListener("error", function() {
+		//show warning message for Chrome 7+ (TODO: Once a working Chrome version is out, add upper limit. Or if mea culpa, fix and clean out this stuff here.)
+		if (parseInt(navigator.appVersion.replace(/.*Chrome\/([0-9]+).*/,'$1')) >= 7)
+			_current.SetInfo('Problem with playback', 'data.id', 'Chrome 7+ has a known issue with HTML5 audio playback', '', '', 'Click to see temporary workaround', 'http://code.google.com/p/jamendoradio/wiki/StreamFailureFix');
+	}, false);
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
         if (request.target) {
             switch (request.target) {
