@@ -76,6 +76,7 @@ function Current() {
 	
 	this.Dirty = false;
 	
+	//handling album art
 	var _onChange = false;
 	this.onChange = function(callback) { _onChange = callback; if(_current.AlbumImageUrl != 'loading' && !this.Ready()) this.Unload(); else this.Update();}
 	function _sendUpdate(albumImageReady) {
@@ -90,17 +91,18 @@ function Current() {
 		
 		chrome.browserAction.setTitle({"title":title+'\nJamendo Radio'})
 		
-		if(!_onChange) return;
+		if(!_onChange) return; //require album art handler
 		
 		if(this.AlbumImageUrl == 'loading') {
-			_sendUpdate(false);
+			_sendUpdate(false); //no album art right now
 		} else if(cachedAlbumUrls.contains(this.AlbumImageUrl)) {
-			_sendUpdate(true);
+			_sendUpdate(true); //show album art immediately
 		} else {
+			//load album art async and display when ready
 			var albumImage = document.createElement("img"); var source = this.AlbumImageUrl;
 			albumImage.onload = function () { cachedAlbumUrls[cachedAlbumUrls.length] = this.src; _current.Update();  }
 			albumImage.src = this.AlbumImageUrl;
-			_sendUpdate(false);
+			_sendUpdate(false); //no album art right now
 		}
 	}
 
@@ -198,7 +200,7 @@ function LoadStation(config) {
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;
-	audio.pause();
+	//audio.pause();  //no hurry to get silent when switching stations, right? The fancy option would be that one station fades out just in time for the other station to take over
 	
 	config += "&n=5";
 	if(config.indexOf("order=random") == -1)
