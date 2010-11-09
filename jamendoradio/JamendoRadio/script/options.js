@@ -32,6 +32,9 @@ function save_options() {
 	storage.Context = $("#contextMenu").attr("checked");
 	storage.Skin = $("#skin").attr("value");
 	save_scrobble();
+	
+	if(storage.Context)
+		new Context().initialize();
 }
 function restore_options() {
 	$("#pageIntegration").attr("checked", storage.SiteIntegration);
