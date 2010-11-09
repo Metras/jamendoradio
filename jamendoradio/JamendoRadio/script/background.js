@@ -76,7 +76,7 @@ function init() {
 	scrobblers.init();
 	Volume = storage.Volume;
 	if(!Volume) Volume = 1;
-	if(storage.Context)
+	if(storage.SiteIntegration)
 		new Context().initialize();
 	
 	Initialized = true;

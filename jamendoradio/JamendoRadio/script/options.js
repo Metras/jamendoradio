@@ -14,8 +14,9 @@ function save_channels() {
         options[options.length] = { "Name" : this.children[1].children[0].value, "Subset" : this.children[3].children[0].value };
     });
     storage.Stations = options;
+	$(".configContainer input").attr('disabled', 'disabled')
 	
-	if(storage.Context)
+	if(storage.SiteIntegration)
 		new Context().initialize();
 }
 function restore_channels() {
@@ -29,16 +30,14 @@ function restore_channels() {
 }
 function save_options() {
 	storage.SiteIntegration =  $("#pageIntegration").attr("checked");
-	storage.Context = $("#contextMenu").attr("checked");
 	storage.Skin = $("#skin").attr("value");
 	save_scrobble();
 	
-	if(storage.Context)
+	if(storage.SiteIntegration)
 		new Context().initialize();
 }
 function restore_options() {
 	$("#pageIntegration").attr("checked", storage.SiteIntegration);
-	$("#contextMenu").attr("checked", storage.Context);
 	$("#skin").attr("value", storage.Skin || "default");
     preview_skin();
 	restore_scrobble();

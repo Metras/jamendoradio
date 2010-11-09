@@ -28,15 +28,10 @@
 					</select>
 					<img id="skinPreview" />
 				</fieldset>
-				<fieldset class="ui-corner-all" style="width:40%;float:right;">
-					<legend>
-						<input type="checkbox" id="contextMenu" style="width: 25px;" />Enable context menus</legend>
-						Enable context menus on Jamendo artist and album pages...
-				</fieldset>
-                <fieldset class="ui-corner-all" style="width:50%;">
+                <fieldset class="ui-corner-all">
                     <legend>
                         <input type="checkbox" id="pageIntegration" style="width: 25px;" />Integrate with
-                        Jamendo.com</legend>Make play buttons on jamendo.com play music in Jamendo Radio (this extension).
+                        Jamendo.com</legend>Make play buttons on jamendo.com play music in Jamendo Radio (this extension), and add context menus to artist and album pages.
                 </fieldset>
 				<fieldset class="ui-corner-all">
 					<legend>
@@ -135,8 +130,6 @@
                 Pop and rock...</li>
             <li class="fg-button ui-state-default ui-corner-all" onclick="$('#classicContext').css('left', event.pageX -5).css('top', event.pageY -5).show(500)">
                 Acoustic and classical...</li>
-			<li class="fg-button ui-state-default ui-corner-all" onclick="AddChannel('Efiel', '/?order=random&artist_idstr=efiel');">
-				Artist Efiel (author favorite)</li>
     </div>
     <div id="jamradioContext" class="ui-helper-hidden ui-widget-header ui-corner-all contextMenu">
         <ul style="width: 300px;">
