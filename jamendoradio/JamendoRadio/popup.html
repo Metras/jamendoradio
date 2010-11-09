@@ -5,13 +5,15 @@
 	<script type="text/javascript" src="script/popup.js"></script>    
 	<script type="text/javascript">
 		$(document).ready(function(){
+			$(".stations a").removeClass('chosen');
 			storage = new Storage();
+
 			loadSkin();
 			loadStations();
 
 			$("#slider").slider({ min: 0, max: 100, step: 1, value: getState().Volume * 100, animate: false, slide: function(event, ui) { getState().SetVolume(ui.value / 100) } });
 			$(".play").click(function() { getState().PPlay(); $(".play").toggleClass("pause", getState()._current.Playing()); });
-			$(".stop").click(function() { getState().Stop(); });
+			$(".stop").click(function() { getState().Stop(); $(".stations a").removeClass('chosen'); });
 			$(".next").click(function() { getState().Next(); });
 });
 	</script>

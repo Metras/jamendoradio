@@ -12,6 +12,7 @@ var jamendo = false;
 var _playlist; 
 var _currentIndex; var _repeat;
 var _prefetching; var _prefetchlist;
+var _currentConfig;
 
 //Storage and state
 var storage = false;
@@ -36,10 +37,9 @@ function init() {
 	audio.addEventListener("error", function() {
 		//show warning message for Chrome 7+ (TODO: Once a working Chrome version is out, add upper limit. Or if mea culpa, fix and clean out this stuff here.)
 		if (zeroSongsPlayed && 4 == audio.error.code && parseInt(navigator.appVersion.replace(/.*Chrome\/([0-9]+).*/,'$1')) >= 7)
-			_current.SetInfo('Problem with playback', 'data.id', 'Chrome 7+ has a known issue with HTML5 audio playback', '', '', 'Click to see temporary workaround', 'http://code.google.com/p/jamendoradio/wiki/StreamFailureFix');
+			_current.StreamError();
 		else if (audio.error) {
-			_current.SetInfo('Problem with playback', 'data.id', 'Requested station/song not available', '', '', 'Check your internet connection', 'http://www.google.com/');
-		//} else switch (audio.error.code) {
+			_current.Error();
 		}
 	}, false);
     chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
@@ -159,6 +159,34 @@ function Current() {
 		this.Update();
 		this.Dirty = false;
 	}
+	
+	this.StreamError = function() {
+		if(!_playlist) { this.Unload(); return; }
+		this.Track = 'Error';
+		this.TrackId = 0;
+		this.Album = 'Chrome 7+ has a known issue with HTML5 audio playback';
+		this.AlbumImageUrl = '../styles/splash.jpg';
+		this.AlbumUrl = 'http://code.google.com/p/jamendoradio/wiki/StreamFailureFix';
+		this.Artist = 'Click to see temporary workaround';
+		this.ArtistUrl = 'http://code.google.com/p/jamendoradio/wiki/StreamFailureFix';
+	
+		this.Update();
+		this.Dirty = false;
+	}
+	
+	this.Error = function () {
+		if(!_playlist) { this.Unload(); return; }
+		this.Track = 'Problem with playback';
+		this.TrackId = 0;
+		this.Album = 'Requested station/song not available';
+		this.AlbumImageUrl = '../styles/splash.jpg';
+		this.AlbumUrl = '';
+		this.Artist = 'Check your internet connection';
+		this.ArtistUrl = '';
+	
+		this.Update();
+		this.Dirty = false;	
+	}
 }
 
 var overrideStartIndex = false; var doSort = false;
@@ -211,11 +239,10 @@ function UpdatePosition(newIndex) {
 //Operation
 function LoadStation(config) {
 	_current.Fetching();
-	_current.config = config; //save original config to enable tracking which station is currently playing
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;
-	//audio.pause();  //no hurry to get silent when switching stations, right? The fancy option would be that one station fades out just in time for the other station to take over
+	_currentConfig = config;
 	
 	config += "&n=5";
 	if(config.indexOf("order=random") == -1)
@@ -229,6 +256,7 @@ function LoadFromMainpage(info) {
 	_prefetching = false;
 	_repeat = false;
 	_playlist = false;
+	_currentConfig = false;
 	
 	if(info.data.indexOf("+") > -1)
 		doSort = info.data;
@@ -252,16 +280,13 @@ function SetVolume(vol) {
 	storage.Volume = vol;
 }
 function Play() {
-	console.log('Play');
 	if(_current.Loaded()) audio.play();
 	audio.volume = Volume;
 }
 function Pause() {
-	console.log('Pause');
 	if(_current.Playing()) audio.pause();
 }
 function PPlay() {
-	console.log('PPlay');
 	if(_current.Playing()) audio.pause();
 	else if (_current.Loaded()) audio.play();
 	audio.volume = Volume;
@@ -269,7 +294,6 @@ function PPlay() {
 }
 
 function Next(forcePlay) {
-	console.log('Next');
 	if(_currentIndex + 1 >= _playlist.length && _playlist.length > 1) { _prefetching = true; jamendo.loadPlaylist(); }
 	_repeat = _repeat && _playlist.length > 1;
 	
@@ -282,10 +306,10 @@ function Next(forcePlay) {
 	
 }
 function Stop() {
-	console.log('Stop');
+	_playlist = false;
+	_currentConfig = false;
 	audio.src = "";
 	audio.load();
-	_playlist = false;
 	scrobblers.submit();
 	scrobblers.clear();
 	_current.Unload();

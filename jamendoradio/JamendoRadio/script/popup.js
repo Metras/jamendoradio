@@ -38,11 +38,12 @@ function loadStations() {
 			AppendStation(storage.Stations[i].Name, storage.Stations[i].Subset);
 		}
 	}
+	
 }
 
 function AppendStation(name, config) {
     var newHtml = "<a class='{2}' onclick='markActiveLink(this)' href='javascript:getState().LoadStation(\"{0}\");'>{1}</a>";
-    $(".stations").append(sformat(newHtml, config, name, (config==getState()._current.config ? 'chosen' : '') ));
+    $(".stations").append(sformat(newHtml, config, name, (config == getState()._currentConfig ? 'chosen' : '') ));
 }
 
 function markActiveLink(linkElement) {
