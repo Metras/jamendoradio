@@ -67,7 +67,7 @@ function Context() {
 			var subset = '/?order=random&album_id=' + albumId;
 			stations.push({ "Name": name, "Subset": subset });
 
-			var cid = chrome.contextMenus.create({title: name, parentId: albumMenu, onclick: function(e) { addArtistStation(e.pageUrl, e.menuItemId); } });
+			var cid = chrome.contextMenus.create({title: name, parentId: albumMenu, onclick: function(e) { addAlbumStation(e.pageUrl, e.menuItemId); } });
 			artistMenus[cid] = name;
 		}
 		storage.Stations = stations;
