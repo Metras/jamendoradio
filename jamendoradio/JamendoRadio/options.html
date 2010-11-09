@@ -4,8 +4,8 @@
 	<link rel="StyleSheet" href="styles/options.css" type="text/css">
 	
     <script src="script/util.js"></script>
+	<script src="script/context.js"></script>
 	<script src="script/options.js"></script>
-
 </head>
 <body onload="restore_options(); restore_channels(); restore_scrobble();">
     <div id="accordion" class="ui-helper-hidden">
@@ -28,7 +28,12 @@
 					</select>
 					<img id="skinPreview" />
 				</fieldset>
-                <fieldset class="ui-corner-all">
+				<fieldset class="ui-corner-all" style="width:40%;float:right;">
+					<legend>
+						<input type="checkbox" id="contextMenu" style="width: 25px;" />Enable context menus</legend>
+						Enable context menus on Jamendo artist and album pages...
+				</fieldset>
+                <fieldset class="ui-corner-all" style="width:50%;">
                     <legend>
                         <input type="checkbox" id="pageIntegration" style="width: 25px;" />Integrate with
                         Jamendo.com</legend>Make play buttons on jamendo.com play music in Jamendo Radio (this extension).
