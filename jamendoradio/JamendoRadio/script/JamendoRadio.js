@@ -9,7 +9,9 @@
     overrideLinks("visual_radio");
     overrideLinks("jambutton", "featured_now_block");
     createArtistRadio("info_artistapage_avatar");
-	createUserRadio("g_avatar");
+	createUserRadio("g_avatar");	
+	
+
 }
 function overrideLinks(cssClass, containerId) {
     var playButtons;
@@ -73,4 +75,5 @@ function start() {
 	chrome.extension.sendRequest( { target : "loadFromMainPage", set : set, data : data }, function (response) { });
 	return false;
 }
-chrome.extension.sendRequest( { target : "storage" }, function (response) { if (response.storage)test=response.storage;if(test && test.SiteIntegration)manipulatePage(); });
+var storage;
+chrome.extension.sendRequest( { target : "storage" }, function (response) { if (response.storage)storage=response.storage;if(storage && storage.SiteIntegration)manipulatePage(); });
