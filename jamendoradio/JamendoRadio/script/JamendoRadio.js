@@ -35,7 +35,7 @@ function createArtistRadio(cssClass) {
     var playButton = document.body.getElementsByClassName(cssClass)[0];
 	if(playButton) {
 		playButton.onclick = function () {
-			chrome.extension.sendRequest( { target : "loadFromMainPage", set : 'artist', data : /artist\/([\w\.%]+)/.exec(location.href)[1] }, function (response) { } );
+			chrome.extension.sendRequest( { target : "loadFromMainPage", set : 'artist', data : /artist\/([\w\.%()]+)/.exec(location.href)[1] }, function (response) { } );
 			return false;
 		}
     }
@@ -44,7 +44,7 @@ function createUserRadio(cssClass) {
 	var playButton = document.body.getElementsByClassName(cssClass)[0];
 	if(playButton) {
 		playButton.onclick = function () {
-			chrome.extension.sendRequest( { target : "loadFromMainPage", set : 'user', data : /user\/([\w\.%]+)/.exec(location.href)[1] }, function (response) { } );
+			chrome.extension.sendRequest( { target : "loadFromMainPage", set : 'user', data : /user\/([\w\.%()]+)/.exec(location.href)[1] }, function (response) { } );
 			return false;
 		}	
 	}

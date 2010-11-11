@@ -4,6 +4,8 @@ function Context() {
 	var albumMenu, artistMenu;
     this.initialize = function () {
 		chrome.contextMenus.removeAll()
+		albumMenus = [];
+		artistMenus = [];
 		createAlbumContext();
 		createArtistContext();
     }
@@ -53,9 +55,11 @@ function Context() {
 	}
 	
 	addAlbumStation = function(url, menuId) {
+		alert('Adding album');
 		var stations = storage.Stations || new Array();
 		var albumId = url.match(/\d+$/)[0];
 		if(menuId) {
+			alert('Adding to existing');
 			for(var i = 0; i < stations.length; i++) {
 				var check = new RegExp("[+=]" + albumId + "([&+]|$)").exec(stations[i].Subset);
 				if(stations[i].Name == albumMenus[menuId] && !check) {
