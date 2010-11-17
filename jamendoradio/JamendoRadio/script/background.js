@@ -36,6 +36,7 @@ function init() {
 	}, false);
 	audio.addEventListener("error", function() {
 		//show warning message for Chrome 7+ (TODO: Once a working Chrome version is out, add upper limit. Or if mea culpa, fix and clean out this stuff here.)
+		if (audio.src=="") return;
 		if (zeroSongsPlayed && 4 == audio.error.code && parseInt(navigator.appVersion.replace(/.*Chrome\/([0-9]+).*/,'$1')) >= 7)
 			_current.StreamError();
 		else if (audio.error) {
