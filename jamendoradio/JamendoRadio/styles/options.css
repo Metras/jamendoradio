@@ -1,8 +1,7 @@
 ﻿@import url(options/jquery-ui-1.7.2.custom.css);
 body
 {
-	height: 97%;
-	Xoverflow: hidden; Xpadding-bottom:15px; /*Annoying status bar fix!*/
+	height: 97%; /*allow scrolling*/
 }
 ul
 {
