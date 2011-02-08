@@ -1,4 +1,4 @@
-﻿var idCounter = 0;
+var idCounter = 0;
 var storage =  new Storage();
 setInterval(function () {
     chrome.extension.sendRequest( { target : "scrobbleReady" }, function (response) {
@@ -152,6 +152,7 @@ $(function () {
     }
     );
     setTimeout(function () {
+        $("#accordion").css("height", "100%");
         $("#accordion").fadeIn(500).accordion( {
             fillSpace : true, changestart : function (event, ui) {
                 cIndex = parseInt(ui.newHeader.attr("index"));
